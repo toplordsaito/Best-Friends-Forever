@@ -8,21 +8,23 @@ const GAME_WIDTH = 800;
 const GAME_HEIGHT = 600;
 
 const PLAYER_WIDTH = 20;
-const PLAYER_HEIGHT = 30;
+const PLAYER_HEIGHT = 90;
 const PLAYER_HEALTH = 10;
 const PLAYER_MAX_SPEED = 600.0;
 const LASER_MAX_SPEED = 300.0;
 const LASER_COOLDOWN = 0.5;
+const START_BossX = GAME_WIDTH;
+const START_BossY = GAME_HEIGHT /2 ;
 
 const ENEMIES_PER_ROW = 4;
-const ENEMY_HEALTH = 1;
-const ENEMY_HORIZONTAL_PADDING = 80;
-const ENEMY_VERTICAL_PADDING = 70;
-const ENEMY_VERTICAL_SPACING = 80;
-const ENEMY_COOLDOWN = 1.0;
+const Boss_Enemy_HEALTH = 1;
+const Boss_Enemy_HORIZONTAL_PADDING = 80;
+const Boss_Enemy_VERTICAL_PADDING = 70;
+const Boss_Enemy_VERTICAL_SPACING = 80;
+const Boss_Enemy_COOLDOWN = 1.0;
 
 const GAME_STATE = {
-    enemyhealth: 1,
+    Boss_Enemyhealth: 1,
   lastTime: Date.now(),
   leftPressed: false,
   rightPressed: false,
@@ -35,12 +37,12 @@ const GAME_STATE = {
   playerCooldown: 0,
   lasers: [],
   enemies: [],
-  enemyLasers: [],
-  enemyup: false,
-  enemydown: false,
+  Boss_EnemyLasers: [],
+  Boss_Enemyup: false,
+  Boss_Enemydown: false,
   gameOver: false,
-  enemyX: 0,
-  enemyY: 0
+  Boss_EnemyX: 0,
+  Boss_EnemyY: 0
 };
 
 function rectsIntersect(r1, r2) {
@@ -76,7 +78,7 @@ function createPlayer($container) {
   GAME_STATE.playerX = 0;
   GAME_STATE.playerY = GAME_HEIGHT / 2;
   const $player = document.createElement("img");
-  $player.src = "img/player-blue-1.png";
+  $player.src = "img/player1.gif";
   $player.className = "player";
   $container.appendChild($player);
   setPosition($player, GAME_STATE.playerX, GAME_STATE.playerY);
@@ -106,11 +108,11 @@ function updatePlayer(dt, $container) {
   GAME_STATE.playerX = clamp(
     GAME_STATE.playerX,
     PLAYER_WIDTH,
-    GAME_WIDTH - PLAYER_WIDTH
+    GAME_WIDTH - PLAYER_WIDTH - 200
   );
   GAME_STATE.playerY = clamp(
     GAME_STATE.playerY,
-    PLAYER_HEIGHT,
+    PLAYER_HEIGHT - 100,
     GAME_HEIGHT - PLAYER_HEIGHT
   );
 
@@ -128,7 +130,7 @@ function updatePlayer(dt, $container) {
 
 function createLaser($container, x, y) {
   const $element = document.createElement("img");
-  $element.src = "img/laser-blue-1.png";
+  $element.src = "img/bullet.gif";
   $element.className = "laser";
   $container.appendChild($element);
   const laser = { x, y, $element };
@@ -136,6 +138,7 @@ function createLaser($container, x, y) {
   const audio = new Audio("sound/sfx-laser1.ogg");
   audio.play();
   setPosition($element, x, y);
+  GAME_STATE.Boss_Enemyup = Math.random() < 0.5 ? true : false;
 }
 
 function updateLasers(dt, $container) {
@@ -150,14 +153,14 @@ function updateLasers(dt, $container) {
     const r1 = laser.$element.getBoundingClientRect();
     const enemies = GAME_STATE.enemies;
     for (let j = 0; j < enemies.length; j++) {
-      const enemy = enemies[j];
-      if (enemy.isDead) continue;
-      const r2 = enemy.$element.getBoundingClientRect();
+      const Boss_Enemy = enemies[j];
+      if (Boss_Enemy.isDead) continue;
+      const r2 = Boss_Enemy.$element.getBoundingClientRect();
       if (rectsIntersect(r1, r2)) {
-        // Enemy was hit
-        enemy.health -= 1;
-        if (enemy.health <= 0){
-        destroyEnemy($container, enemy);
+        // Boss_Enemy was hit
+        Boss_Enemy.health -= 1;
+        if (Boss_Enemy.health <= 0){
+        destroyBoss_Enemy($container, Boss_Enemy);
         }
         destroyLaser($container, laser);
         break;
@@ -172,68 +175,72 @@ function destroyLaser($container, laser) {
   laser.isDead = true;
 }
 
-function createEnemy($container) {
-    const x = GAME_WIDTH;
-    const y = GAME_HEIGHT / 2;
+function createBoss_Enemy($container) {
+    const x = START_BossX;
+    const y = START_BossY;
   const $element = document.createElement("img");
-  $element.src = "img/enemy-blue-1.png";
-  $element.className = "enemy";
+  $element.src = "img/Enemy-blue-1.png";
+  $element.className = "Boss_Enemy";
   $container.appendChild($element);
-  const enemy = {
-    health: GAME_STATE.enemyhealth,
+  const Boss_Enemy = {
+    health: GAME_STATE.Boss_Enemyhealth,
     x,
     y,
-    cooldown: rand(0.5, ENEMY_COOLDOWN),
+    cooldown: rand(0.5, Boss_Enemy_COOLDOWN),
     $element
   };
-  GAME_STATE.enemies.push(enemy);
+  GAME_STATE.enemies.push(Boss_Enemy);
   setPosition($element, x, y);
 }
 
 setInterval(function(){
-    GAME_STATE.enemyup = Math.random() < 0.5 ? true : false;
-}, 1000)
+    GAME_STATE.Boss_Enemyup = Math.random() < 0.5 ? true : false;
+}, 500)
 function updateEnemies(dt, $container) {
 //   const dx = Math.sin(GAME_STATE.lastTime / 1000.0) * 50;
 //   const dy = Math.cos(GAME_STATE.lastTime / 1000.0) * 10;
         const dx = Math.sin(GAME_STATE.lastTime / 1000.0) * 50;
-        const dy = (GAME_STATE.enemyup == true? 1: -1) * 10;
+        GAME_STATE.Boss_EnemyY += (GAME_STATE.Boss_Enemyup == true? 1: -1) * 1;
 
   const enemies = GAME_STATE.enemies;
   for (let i = 0; i < enemies.length; i++) {
-    const enemy = enemies[i];
-    const x = enemy.x + dx;
-    const y = enemy.y + dy;
-    setPosition(enemy.$element, x, y);
-    enemy.cooldown -= dt;
-    if (enemy.cooldown <= 0) {
-      createEnemyLaser($container, x, y);
-      enemy.cooldown = ENEMY_COOLDOWN;
+    const Boss_Enemy = enemies[i];
+    var x = Boss_Enemy.x + GAME_STATE.Boss_EnemyX + dx;
+    var y = Boss_Enemy.y + GAME_STATE.Boss_EnemyY;
+    x = clamp(x, 0, GAME_WIDTH-40);
+    y = clamp(y, 0, GAME_HEIGHT-95);
+    setPosition(Boss_Enemy.$element, x, y);
+    Boss_Enemy.cooldown -= dt;
+    if (Boss_Enemy.cooldown <= 0) {
+      createBoss_EnemyLaser($container, x, y);
+      Boss_Enemy.cooldown = Boss_Enemy_COOLDOWN;
     }
   }
   GAME_STATE.enemies = GAME_STATE.enemies.filter(e => !e.isDead);
 }
 
-function destroyEnemy($container, enemy) {
-  $container.removeChild(enemy.$element);
-  enemy.isDead = true;
-  console.log(GAME_STATE.enemyhealth);
-  GAME_STATE.enemyhealth += 1;
-  createEnemy($container);
+function destroyBoss_Enemy($container, Boss_Enemy) {
+  $container.removeChild(Boss_Enemy.$element);
+  GAME_STATE.Boss_EnemyX = 0;
+  GAME_STATE.Boss_EnemyY = 0;
+  Boss_Enemy.isDead = true;
+  console.log(GAME_STATE.Boss_Enemyhealth);
+  GAME_STATE.Boss_Enemyhealth += 1;
+  createBoss_Enemy($container);
 }
 
-function createEnemyLaser($container, x, y) {
+function createBoss_EnemyLaser($container, x, y) {
   const $element = document.createElement("img");
-  $element.src = "img/laser-red-5.png";
-  $element.className = "enemy-laser";
+  $element.src = "img/e_bullet.gif";
+  $element.className = "Boss_Enemy-laser";
   $container.appendChild($element);
   const laser = { x, y, $element };
-  GAME_STATE.enemyLasers.push(laser);
+  GAME_STATE.Boss_EnemyLasers.push(laser);
   setPosition($element, x, y);
 }
 
-function updateEnemyLasers(dt, $container) {
-  const lasers = GAME_STATE.enemyLasers;
+function updateBoss_EnemyLasers(dt, $container) {
+  const lasers = GAME_STATE.Boss_EnemyLasers;
   for (let i = 0; i < lasers.length; i++) {
     const laser = lasers[i];
     laser.x -= dt * LASER_MAX_SPEED;
@@ -247,16 +254,17 @@ function updateEnemyLasers(dt, $container) {
     if (rectsIntersect(r1, r2)) {
       // Player was hit
     GAME_STATE.player_health -= 1;
-    destroyEnemylaser($container, laser);
+    document.querySelector("#P_health").style.width = `${GAME_STATE.player_health*10}%`;;
+    destroyBoss_Enemylaser($container, laser);
       if (GAME_STATE.player_health <= 0){
         destroyPlayer($container, player);
       }
       break;
     }
   }
-  GAME_STATE.enemyLasers = GAME_STATE.enemyLasers.filter(e => !e.isDead);
+  GAME_STATE.Boss_EnemyLasers = GAME_STATE.Boss_EnemyLasers.filter(e => !e.isDead);
 }
-function destroyEnemylaser($container, laser) {
+function destroyBoss_Enemylaser($container, laser) {
     $container.removeChild(laser.$element);
     laser.isDead = true;
   }
@@ -266,13 +274,13 @@ function destroyEnemylaser($container, laser) {
 function init() {
   const $container = document.querySelector(".game");
   createPlayer($container);
-  createEnemy($container);
-//   const enemySpacing =(GAME_WIDTH - ENEMY_HORIZONTAL_PADDING * 2) / (ENEMIES_PER_ROW - 1);
+  createBoss_Enemy($container);
+//   const Boss_EnemySpacing =(GAME_WIDTH - Boss_Enemy_HORIZONTAL_PADDING * 2) / (ENEMIES_PER_ROW - 1);
 //   for (let j = 0; j < 3; j++) {
-//     const y = ENEMY_VERTICAL_PADDING + j * ENEMY_VERTICAL_SPACING;
+//     const y = Boss_Enemy_VERTICAL_PADDING + j * Boss_Enemy_VERTICAL_SPACING;
 //     for (let i = 0; i < ENEMIES_PER_ROW; i++) {
-//       const x = i * enemySpacing + ENEMY_HORIZONTAL_PADDING;
-//       createEnemy($container, x, y);
+//       const x = i * Boss_EnemySpacing + Boss_Enemy_HORIZONTAL_PADDING;
+//       createBoss_Enemy($container, x, y);
 //     }
 //   }
 }
@@ -300,7 +308,7 @@ function update(e) {
   updatePlayer(dt, $container);
   updateLasers(dt, $container);
   updateEnemies(dt, $container);
-  updateEnemyLasers(dt, $container);
+  updateBoss_EnemyLasers(dt, $container);
 
   GAME_STATE.lastTime = currentTime;
   window.requestAnimationFrame(update);

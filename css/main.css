@@ -76,7 +76,7 @@ footer {
 .game .laser {
   position: absolute;
   margin-left: -2.5px;
-  height: 30px;
+  height: 50px;
 }
 
 .game .Boss_Enemy-laser {
@@ -146,9 +146,32 @@ footer {
   /* background: firebrick; */
   border-style : solid; 
   border-color: aliceblue;
+  position: absolute;
 }
 #P_health{
-  background: #F00;
+  background: rgb(245, 132, 132);
+  width: 100%;
+  height: 100%;
+}
+#score_f{
+  position: absolute;
+  background: #FFF;
+  right: 0;
+  margin: 1em;
+}
+.game #E_maxhealth{
+  width: 30em;
+  height: 1em;
+  margin: 1em;
+  bottom: 0px;
+  right: 10px;
+  position: absolute;
+  /* background: firebrick; */
+  border-style : solid; 
+  border-color: aliceblue;
+}
+#E_health{
+  background: rgb(255, 13, 13);
   width: 100%;
   height: 100%;
 }

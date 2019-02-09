@@ -42,7 +42,8 @@ const GAME_STATE = {
   Boss_Enemydown: false,
   gameOver: false,
   Boss_EnemyX: 0,
-  Boss_EnemyY: 0
+  Boss_EnemyY: 0,
+  score: 0
 };
 
 function rectsIntersect(r1, r2) {
@@ -112,7 +113,7 @@ function updatePlayer(dt, $container) {
   );
   GAME_STATE.playerY = clamp(
     GAME_STATE.playerY,
-    PLAYER_HEIGHT - 100,
+    PLAYER_HEIGHT - 60,
     GAME_HEIGHT - PLAYER_HEIGHT
   );
 
@@ -159,8 +160,11 @@ function updateLasers(dt, $container) {
       if (rectsIntersect(r1, r2)) {
         // Boss_Enemy was hit
         Boss_Enemy.health -= 1;
+        document.querySelector("#E_health").style.width = `${Boss_Enemy.health/ GAME_STATE.Boss_Enemyhealth * 100}%`;
         if (Boss_Enemy.health <= 0){
         destroyBoss_Enemy($container, Boss_Enemy);
+        GAME_STATE.score += 10 * GAME_STATE.Boss_Enemyhealth;
+        document.getElementById("score_f").innerHTML = `Score : ${GAME_STATE.score}`;
         }
         destroyLaser($container, laser);
         break;
@@ -178,6 +182,7 @@ function destroyLaser($container, laser) {
 function createBoss_Enemy($container) {
     const x = START_BossX;
     const y = START_BossY;
+    document.querySelector("#E_health").style.width = `100%`;
   const $element = document.createElement("img");
   $element.src = "img/Enemy-blue-1.png";
   $element.className = "Boss_Enemy";
@@ -208,7 +213,7 @@ function updateEnemies(dt, $container) {
     var x = Boss_Enemy.x + GAME_STATE.Boss_EnemyX + dx;
     var y = Boss_Enemy.y + GAME_STATE.Boss_EnemyY;
     x = clamp(x, 0, GAME_WIDTH-40);
-    y = clamp(y, 0, GAME_HEIGHT-95);
+    y = clamp(y, 70, GAME_HEIGHT-65);
     setPosition(Boss_Enemy.$element, x, y);
     Boss_Enemy.cooldown -= dt;
     if (Boss_Enemy.cooldown <= 0) {
@@ -225,7 +230,7 @@ function destroyBoss_Enemy($container, Boss_Enemy) {
   GAME_STATE.Boss_EnemyY = 0;
   Boss_Enemy.isDead = true;
   console.log(GAME_STATE.Boss_Enemyhealth);
-  GAME_STATE.Boss_Enemyhealth += 1;
+  GAME_STATE.Boss_Enemyhealth *= 2;
   createBoss_Enemy($container);
 }
 
@@ -254,7 +259,7 @@ function updateBoss_EnemyLasers(dt, $container) {
     if (rectsIntersect(r1, r2)) {
       // Player was hit
     GAME_STATE.player_health -= 1;
-    document.querySelector("#P_health").style.width = `${GAME_STATE.player_health*10}%`;;
+    document.querySelector("#P_health").style.width = `${GAME_STATE.player_health*10}%`;
     destroyBoss_Enemylaser($container, laser);
       if (GAME_STATE.player_health <= 0){
         destroyPlayer($container, player);

@@ -13,11 +13,24 @@
     <header>Game</header>
     <div class="game-wrapper">
       <div class="game">
+          <div class="gui">
+              <h1>Best Friend Forever!</h1>
+              <h2>เป็นได้แค่......เพื่อน</h2>
+              <h1>choice you character</h1>
+              <button class="slidebut" onclick="slideIMG(-1)">&#10094;</button>
+              <img src="img/player/1.gif" id="playerchoose"/>
+              <button class="slidebut" onclick="slideIMG(+1)">&#10095;</button><br>
+              
+    
+              <button class="btn" onclick="init()">START</button>
+            </div>
+
+          <div id= "ingame">
         <div id="maxhealth"> <div id="P_health"> </div></div>
         <div id="score_f"> Score : 0</div>
         <img src="img/pause.gif" id="pausebutton"/>
         <div id="E_maxhealth"> <div id="E_health"> </div></div>
-
+          </div>
         </div>
       <div class="congratulations">
         <h1>Congratulations!</h1>

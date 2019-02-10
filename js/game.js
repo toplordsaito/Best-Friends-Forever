@@ -14,6 +14,8 @@ const PLAYER_MINX = PLAYER_WIDTH;
 const PLAYER_MAXX = GAME_WIDTH - PLAYER_WIDTH - 200;
 const PLAYER_MINY = PLAYER_HEIGHT - 60;
 const PLAYER_MAXY = GAME_HEIGHT - PLAYER_HEIGHT;
+const PLAYER_STYLE = 12;
+var PLAYER_CHAR = 1;
 
 const PLAYER_MAX_SPEED = 600.0;
 const LASER_MAX_SPEED = 300.0;
@@ -74,13 +76,7 @@ function setPosition(el, x, y) {
 }
 
 function clamp(v, min, max) {
-  if (v < min) {
-    return min;
-  } else if (v > max) {
-    return max;
-  } else {
-    return v;
-  }
+  return Math.max(Math.min(max, v), min);
 }
 
 function rand(min, max) {
@@ -93,7 +89,7 @@ function createPlayer($container) {
   GAME_STATE.playerX = 0;
   GAME_STATE.playerY = GAME_HEIGHT / 2;
   const $player = document.createElement("img");
-  $player.src = "img/player1.gif";
+  $player.src = `img/player/${PLAYER_CHAR}.gif`;
   $player.className = "player";
   $container.appendChild($player);
   setPosition($player, GAME_STATE.playerX, GAME_STATE.playerY);
@@ -306,10 +302,15 @@ function destroyBoss_Enemylaser($container, laser) {
 
 
 function init() {
+  document.querySelector(".gui").style.display = "none";
+  document.querySelector("#ingame").style.display = "inherit";
   const $container = document.querySelector(".game");
   setInterval(enemymove, Boss_Enemy_MOVEDELAY);
   createPlayer($container);
   createBoss_Enemy($container);
+  window.addEventListener("keydown", onKeyDown);
+  window.addEventListener("keyup", onKeyUp);
+  window.requestAnimationFrame(update);
 //   const Boss_EnemySpacing =(GAME_WIDTH - Boss_Enemy_HORIZONTAL_PADDING * 2) / (ENEMIES_PER_ROW - 1);
 //   for (let j = 0; j < 3; j++) {
 //     const y = Boss_Enemy_VERTICAL_PADDING + j * Boss_Enemy_VERTICAL_SPACING;
@@ -393,7 +394,17 @@ function onKeyUp(e) {
   }
 }
 
-init();
-window.addEventListener("keydown", onKeyDown);
-window.addEventListener("keyup", onKeyUp);
-window.requestAnimationFrame(update);
+
+function slideIMG(n){
+  PLAYER_CHAR += n;
+  if (PLAYER_CHAR > PLAYER_STYLE){
+    PLAYER_CHAR = 1;
+  }
+  else if (PLAYER_CHAR < 1){
+    PLAYER_CHAR = PLAYER_STYLE;
+  }
+  CslideIMG();
+}
+function CslideIMG(n){
+  document.getElementById("playerchoose").src = `img/player/${PLAYER_CHAR}.gif`;
+}

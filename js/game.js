@@ -8,13 +8,13 @@ const GAME_WIDTH = 800;
 const GAME_HEIGHT = 600;
 
 const PLAYER_WIDTH = 20;
-const PLAYER_HEIGHT = 90;
+const PLAYER_HEIGHT = 110;
 const PLAYER_HEALTH = 10;
 const PLAYER_MINX = PLAYER_WIDTH;
 const PLAYER_MAXX = GAME_WIDTH - PLAYER_WIDTH - 200;
-const PLAYER_MINY = PLAYER_HEIGHT - 60;
+const PLAYER_MINY = PLAYER_HEIGHT - 70;
 const PLAYER_MAXY = GAME_HEIGHT - PLAYER_HEIGHT;
-const PLAYER_STYLE = 12;
+const PLAYER_STYLE = 13;
 var PLAYER_CHAR = 1;
 
 const PLAYER_MAX_SPEED = 600.0;
@@ -28,7 +28,8 @@ const Boss_Enemy_HEALTH = 1;
 const Boss_Enemy_HORIZONTAL_PADDING = 80;
 const Boss_Enemy_VERTICAL_PADDING = 70;
 const Boss_Enemy_VERTICAL_SPACING = 80;
-const Boss_Enemy_COOLDOWN = 1.0;
+const Boss_Enemy_COOLDOWN = 2;
+const Boss_Enemy_COOLDOWN_RANGE = 0.2;
 const Boss_Enemy_SPEED = 2;
 const Boss_Enemy_MOVEDELAY = 500;
 const Boss_Enemy_MINX = 0;
@@ -99,8 +100,6 @@ function destroyPlayer($container, player) {
   boom($container,  GAME_STATE.playerX,  GAME_STATE.playerY);
   $container.removeChild(player);
   GAME_STATE.gameOver = true;
-  const audio = new Audio("sound/sfx-lose.ogg");
-  audio.play();
 }
 
 function updatePlayer(dt, $container) {
@@ -133,13 +132,14 @@ function updatePlayer(dt, $container) {
 }
 
 function createLaser($container, x, y) {
-  const $element = document.createElement("img");
+  const $element = document.createElement("img"); 
   $element.src = "img/bullet.gif";
   $element.className = "laser";
   $container.appendChild($element);
   const laser = { x, y, $element };
   GAME_STATE.lasers.push(laser);
-  const audio = new Audio("sound/sfx-laser1.ogg");
+  const audio = new Audio("sound/lazer.mp3");
+  audio.volume = .3;
   audio.play();
   setPosition($element, x, y);
   enemymove();
@@ -150,6 +150,8 @@ function boom($container, x, y) {
   boom.className = "boom";
   $container.appendChild(boom);
   setPosition(boom, x, y);
+  const audio = new Audio("sound/Bomb.mp3");
+  audio.play();
   setTimeout(function(){
     $container.removeChild(boom);
   }, 1000);
@@ -207,6 +209,7 @@ function createBoss_Enemy($container) {
   $element.className = "Boss_Enemy";
   $container.appendChild($element);
   const Boss_Enemy = {
+    maxcooldown: (parseInt(Math.random() * Boss_Enemy_COOLDOWN) + 1) * Boss_Enemy_COOLDOWN_RANGE + 0.6,
     health: GAME_STATE.Boss_Enemyhealth,
     x,
     y,
@@ -243,7 +246,7 @@ function updateEnemies(dt, $container) {
     Boss_Enemy.cooldown -= dt;
     if (Boss_Enemy.cooldown <= 0) {
       createBoss_EnemyLaser($container, x, y);
-      Boss_Enemy.cooldown = Boss_Enemy_COOLDOWN;
+      Boss_Enemy.cooldown = Boss_Enemy.maxcooldown;
     }
   }
   GAME_STATE.enemies = GAME_STATE.enemies.filter(e => !e.isDead);

@@ -65,7 +65,17 @@ footer {
   position: absolute;
   margin-left: -20px;
   margin-top: -18px;
-  width: 40px;
+  width: 100px;
+  animation: ene-pop 1s;
+}
+
+@keyframes ene-pop{
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 .game .player {
   position: absolute;
@@ -142,6 +152,10 @@ footer {
   padding: 10px 40px;
   font: 14px sans-serif;
 }
+
+
+
+
 @keyframes pop-in {
   0% {
     opacity: 0;

@@ -3,9 +3,12 @@ const KEY_CODE_RIGHT = 39;
 const KEY_CODE_SPACE = 32;
 const KEY_CODE_UP = 38;
 const KEY_CODE_DOWN = 40;
+const KEY_CODE_P = 80;
+const KEY_CODE_R = 82;
 
 const GAME_WIDTH = 800;
 const GAME_HEIGHT = 600;
+
 
 const PLAYER_WIDTH = 20;
 const PLAYER_HEIGHT = 110;
@@ -37,8 +40,9 @@ const Boss_Enemy_MAXX = GAME_WIDTH - 60;
 const Boss_Enemy_MINY = 70;
 const Boss_Enemy_MAXY = GAME_HEIGHT - 80;
 const Boss_Enemy_STYLE = 11;
+var Boss_Enemy_Damage = 1;
 var ON_PAUSE = false;
-
+var ON_PLAY = false;
 
 const GAME_STATE = {
     Boss_Enemyhealth: 1,
@@ -144,6 +148,36 @@ function createLaser($container, x, y) {
   setPosition($element, x, y);
   enemymove();
 }
+function damaged($container, x, y, num) {
+  const damaged = document.createElement("div");
+  damaged.innerHTML = `${num}`;
+  damaged.className = "damaged";
+  $container.appendChild(damaged);
+  setPosition(damaged, x, y);
+  updatehealth();
+  setTimeout(function(){
+    $container.removeChild(damaged);
+  }, 300);
+
+}
+
+function updatehealth(){
+  document.querySelector("#P_health").style.width = `${GAME_STATE.player_health/PLAYER_HEALTH*100}%`;
+}
+function heal($container, x, y, num) {
+  const heal = document.createElement("div");
+  heal.innerHTML = `${num}`;
+  heal.className = "heal";
+  $container.appendChild(heal);
+  setPosition(heal, x, y);
+  updatehealth();
+  setTimeout(function(){
+    $container.removeChild(heal);
+  }, 300);
+}
+
+
+
 function boom($container, x, y) {
   const boom = document.createElement("img");
   boom.src = "img/boom.gif";
@@ -181,6 +215,9 @@ function updateLasers(dt, $container) {
         if (Boss_Enemy.health <= 0){
         // boom($Boss_Enemy, Boss_Enemy.x, Boss_Enemy.y+GAME_STATE.Boss_EnemyY);
         boom($container, laser.x, laser.y);
+        GAME_STATE.player_health = Math.min(10, GAME_STATE.player_health + 2);
+        heal($container, GAME_STATE.playerX, GAME_STATE.playerY, "20%");
+        
         destroyBoss_Enemy($container, Boss_Enemy);
         
         GAME_STATE.score += 10 * GAME_STATE.Boss_Enemyhealth;
@@ -287,7 +324,7 @@ function updateBoss_EnemyLasers(dt, $container) {
     if (rectsIntersect(r1, r2)) {
       // Player was hit
     GAME_STATE.player_health -= 1;
-    document.querySelector("#P_health").style.width = `${GAME_STATE.player_health*10}%`;
+    damaged($container, laser.x, laser.y, Boss_Enemy_Damage);
     destroyBoss_Enemylaser($container, laser);
       if (GAME_STATE.player_health <= 0){
         destroyPlayer($container, player);
@@ -303,15 +340,15 @@ function destroyBoss_Enemylaser($container, laser) {
   }
 
 
-
 function init() {
+  ON_PLAY = true;
   document.querySelector(".gui").style.display = "none";
   document.querySelector("#ingame").style.display = "inherit";
   const $container = document.querySelector(".game");
   setInterval(enemymove, Boss_Enemy_MOVEDELAY);
   createPlayer($container);
   createBoss_Enemy($container);
-  window.addEventListener("keydown", onKeyDown);
+  // window.addEventListener("keydown", onKeyDown);
   window.addEventListener("keyup", onKeyUp);
   window.requestAnimationFrame(update);
 //   const Boss_EnemySpacing =(GAME_WIDTH - Boss_Enemy_HORIZONTAL_PADDING * 2) / (ENEMIES_PER_ROW - 1);
@@ -330,14 +367,18 @@ function playerHasWon() {
 }
 
 
-document.getElementById("pausebutton").addEventListener('click', function() {
-  ON_PAUSE = true;
-}, false);
+document.getElementById("pausebutton").addEventListener('click', resume, false);
 function resume(){
-  document.querySelector(".pauseui").style.display = "none";
-  window.requestAnimationFrame(update);
-  ON_PAUSE = false;
-
+  if (ON_PLAY){ 
+    if (ON_PAUSE === false){
+      ON_PAUSE = true;
+     }
+     else{
+      document.querySelector(".pauseui").style.display = "none";
+      window.requestAnimationFrame(update);
+      ON_PAUSE = false;
+     }
+    }
 };
 
 function update(e) {
@@ -370,16 +411,25 @@ function update(e) {
 }
 
 function onKeyDown(e) {
-  if (e.keyCode === KEY_CODE_LEFT) {
-    GAME_STATE.leftPressed = true;
-  } else if (e.keyCode === KEY_CODE_RIGHT) {
-    GAME_STATE.rightPressed = true;
-  } else if (e.keyCode === KEY_CODE_SPACE) {
-    GAME_STATE.spacePressed = true;
-  } else if (e.keyCode === KEY_CODE_UP) {
-    GAME_STATE.upPressed = true;
-  } else if (e.keyCode === KEY_CODE_DOWN) {
-    GAME_STATE.downPressed = true;
+
+  if(ON_PLAY)
+  {
+    if (e.keyCode === KEY_CODE_LEFT) {
+      GAME_STATE.leftPressed = true;
+    } else if (e.keyCode === KEY_CODE_RIGHT) {
+      GAME_STATE.rightPressed = true;
+    } else if (e.keyCode === KEY_CODE_SPACE) {
+      GAME_STATE.spacePressed = true;
+    } else if (e.keyCode === KEY_CODE_UP) {
+      GAME_STATE.upPressed = true;
+    } else if (e.keyCode === KEY_CODE_DOWN) {
+      GAME_STATE.downPressed = true;
+    }
+  } 
+  if (e.keyCode === KEY_CODE_P) {
+    resume();
+  } else if(e.keyCode === KEY_CODE_R){
+    window.location.reload()
   }
 }
 
@@ -411,3 +461,5 @@ function slideIMG(n){
 function CslideIMG(n){
   document.getElementById("playerchoose").src = `img/player/${PLAYER_CHAR}.gif`;
 }
+
+window.addEventListener("keydown", onKeyDown);

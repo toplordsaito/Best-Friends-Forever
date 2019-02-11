@@ -110,6 +110,20 @@ footer {
   margin-left: -2.5px;
   height: 50px;
 }
+.game .damaged{
+  position: absolute;
+  margin-left: 15px; 
+  font-size: 20px;
+  color: red;
+}
+.game .heal{
+  position: absolute;
+  margin-left: 15px; 
+  font-size: 40px;
+  color: greenyellow;
+}
+
+
 
 .game .boom {
   position: absolute;

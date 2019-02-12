@@ -216,7 +216,7 @@ function updateLasers(dt, $container) {
         // boom($Boss_Enemy, Boss_Enemy.x, Boss_Enemy.y+GAME_STATE.Boss_EnemyY);
         boom($container, laser.x, laser.y);
         GAME_STATE.player_health = Math.min(10, GAME_STATE.player_health + 2);
-        heal($container, GAME_STATE.playerX, GAME_STATE.playerY, "20%");
+        heal($container, GAME_STATE.playerX, GAME_STATE.playerY, "+20%");
         
         destroyBoss_Enemy($container, Boss_Enemy);
         

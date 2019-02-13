@@ -8,6 +8,8 @@ const KEY_CODE_R = 82;
 
 const GAME_WIDTH = 800;
 const GAME_HEIGHT = 600;
+const GAME_TOP = 32;
+const GAME_BOTTOM = 32;
 
 
 const PLAYER_WIDTH = 20;
@@ -21,6 +23,7 @@ const PLAYER_STYLE = 13;
 var PLAYER_CHAR = 1;
 
 const PLAYER_MAX_SPEED = 600.0;
+const METEO_SPEED = 200.0;
 const LASER_MAX_SPEED = 300.0;
 const LASER_COOLDOWN = 0.5;
 const START_BossX = GAME_WIDTH;
@@ -31,7 +34,7 @@ const Boss_Enemy_HEALTH = 1;
 const Boss_Enemy_HORIZONTAL_PADDING = 80;
 const Boss_Enemy_VERTICAL_PADDING = 70;
 const Boss_Enemy_VERTICAL_SPACING = 80;
-const Boss_Enemy_COOLDOWN = 2;
+const Boss_Enemy_COOLDOWN = 4;
 const Boss_Enemy_COOLDOWN_RANGE = 0.2;
 const Boss_Enemy_SPEED = 2;
 const Boss_Enemy_MOVEDELAY = 500;
@@ -41,8 +44,12 @@ const Boss_Enemy_MINY = 70;
 const Boss_Enemy_MAXY = GAME_HEIGHT - 80;
 const Boss_Enemy_STYLE = 11;
 var Boss_Enemy_Damage = 1;
-var ON_PAUSE = false;
+var ON_PAUSE = true;
 var ON_PLAY = false;
+
+
+
+const METEO_DELAY = 1500;
 
 const GAME_STATE = {
     Boss_Enemyhealth: 1,
@@ -58,6 +65,7 @@ const GAME_STATE = {
   playerCooldown: 0,
   lasers: [],
   enemies: [],
+  meteo: [],
   Boss_EnemyLasers: [],
   Boss_Enemyup: false,
   Boss_Enemydown: false,
@@ -203,30 +211,8 @@ function updateLasers(dt, $container) {
     }
     setPosition(laser.$element, laser.x, laser.y);
     const r1 = laser.$element.getBoundingClientRect();
-    const enemies = GAME_STATE.enemies;
-    for (let j = 0; j < enemies.length; j++) {
-      const Boss_Enemy = enemies[j];
-      if (Boss_Enemy.isDead) continue;
-      const r2 = Boss_Enemy.$element.getBoundingClientRect();
-      if (rectsIntersect(r1, r2)) {
-        // Boss_Enemy was hit
-        Boss_Enemy.health -= 1;
-        document.querySelector("#E_health").style.width = `${Boss_Enemy.health/ GAME_STATE.Boss_Enemyhealth * 100}%`;
-        if (Boss_Enemy.health <= 0){
-        // boom($Boss_Enemy, Boss_Enemy.x, Boss_Enemy.y+GAME_STATE.Boss_EnemyY);
-        boom($container, laser.x, laser.y);
-        GAME_STATE.player_health = Math.min(10, GAME_STATE.player_health + 2);
-        heal($container, GAME_STATE.playerX, GAME_STATE.playerY, "+20%");
-        
-        destroyBoss_Enemy($container, Boss_Enemy);
-        
-        GAME_STATE.score += 10 * GAME_STATE.Boss_Enemyhealth;
-        document.getElementById("score_f").innerHTML = `Score : ${GAME_STATE.score}`;
-        }
-        destroyLaser($container, laser);
-        break;
-      }
-    }
+    eachENEMY($container, r1, laser);
+    eachMETEO($container, r1, laser);
   }
   GAME_STATE.lasers = GAME_STATE.lasers.filter(e => !e.isDead);
 }
@@ -235,6 +221,64 @@ function destroyLaser($container, laser) {
   $container.removeChild(laser.$element);
   laser.isDead = true;
 }
+
+
+function eachENEMY($container, r1, laser){
+  const enemies = GAME_STATE.enemies;
+  for (let j = 0; j < enemies.length; j++) {
+    const Boss_Enemy = enemies[j];
+    if (Boss_Enemy.isDead) continue;
+    const r2 = Boss_Enemy.$element.getBoundingClientRect();
+    if (rectsIntersect(r1, r2)) {
+      // Boss_Enemy was hit
+      Boss_Enemy.health -= 1;
+      document.querySelector("#E_health").style.width = `${Boss_Enemy.health/ GAME_STATE.Boss_Enemyhealth * 100}%`;
+      if (Boss_Enemy.health <= 0){
+      // boom($Boss_Enemy, Boss_Enemy.x, Boss_Enemy.y+GAME_STATE.Boss_EnemyY);
+      boom($container, laser.x, laser.y);
+      GAME_STATE.player_health = Math.min(10, GAME_STATE.player_health + 2);
+      heal($container, GAME_STATE.playerX, GAME_STATE.playerY, "+20%");
+      
+      destroyBoss_Enemy($container, Boss_Enemy);
+      
+      GAME_STATE.score += 10 * GAME_STATE.Boss_Enemyhealth;
+      }
+      destroyLaser($container, laser);
+      break;
+    }
+  }
+}
+
+function eachMETEO($container, r1, laser){
+  const meteo = GAME_STATE.meteo;
+  for (let j = 0; j < meteo.length; j++) {
+    const mete_o = meteo[j];
+    if (mete_o.isDead) continue;
+    const r2 = mete_o.$meteo.getBoundingClientRect();
+    if (rectsIntersect(r1, r2)) {
+      // mete_o was hit
+      mete_o.hp -= 1;
+      console.log(mete_o.hp);
+      if (mete_o.hp <= 0){
+      // boom($mete_o, mete_o.x, mete_o.y+GAME_STATE.mete_oY);
+      boom($container, laser.x, laser.y);
+      destroyMETEO($container, mete_o);
+      GAME_STATE.score += 1;
+      }
+      destroyLaser($container, laser);
+      break;
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
 
 function createBoss_Enemy($container) {
     const x = START_BossX;
@@ -340,14 +384,78 @@ function destroyBoss_Enemylaser($container, laser) {
   }
 
 
+
+
+  function createMETEO($container) {
+    var meteosize = (parseInt(Math.random() * 5) + 1);
+    var x = GAME_WIDTH - meteosize * 20 + 20;
+    var y = Math.random() * GAME_HEIGHT + meteosize * 10;
+    y = clamp(y, GAME_TOP, GAME_HEIGHT - 10 * meteosize - 70)
+    const $meteo = document.createElement("img");
+    $meteo.style.width = `${meteosize * 20}px`
+    $meteo.src = "img/meteorite.gif";
+    $meteo.className = "meteo";
+    $container.appendChild($meteo);
+    const mymeteo = { x, y, $meteo , hp: meteosize};
+    GAME_STATE.meteo.push(mymeteo);
+    setPosition($meteo, x, y);
+  }
+  function updateMETEO(dt, $container) {
+    const B_METEO = GAME_STATE.meteo;
+    for (let i = 0; i < B_METEO.length; i++) {
+      const meteo = B_METEO[i];
+      meteo.x -= dt * METEO_SPEED;
+      if (meteo.x < 0) {
+         destroyMETEO($container, meteo);
+      }
+      setPosition(meteo.$meteo, meteo.x, meteo.y);
+      const r1 = meteo.$meteo.getBoundingClientRect();
+      const player = document.querySelector(".player");
+      const r2 = player.getBoundingClientRect();
+      if (rectsIntersect(r1, r2)) {
+        // Player was hit
+      GAME_STATE.player_health -= 1;
+      damaged($container, meteo.x, meteo.y, Boss_Enemy_Damage);
+      destroyMETEO($container, meteo);
+        if (GAME_STATE.player_health <= 0){
+          destroyPlayer($container, player);
+        }
+        break;
+      }
+    }
+    GAME_STATE.meteo = GAME_STATE.meteo.filter(e => !e.isDead);
+  }
+  function destroyMETEO($container, meteo) {
+      $container.removeChild(meteo.$meteo);
+      meteo.isDead = true;
+    }
+
+function spawnMETEO($container){
+    setInterval(function(){
+      if (!ON_PAUSE && !GAME_STATE.gameOver){
+      createMETEO($container)}
+    }, METEO_DELAY);
+  
+}
+
+
+
+
+
+
+
+
+
 function init() {
   ON_PLAY = true;
+  ON_PAUSE = false;
   document.querySelector(".gui").style.display = "none";
   document.querySelector("#ingame").style.display = "inherit";
   const $container = document.querySelector(".game");
   setInterval(enemymove, Boss_Enemy_MOVEDELAY);
   createPlayer($container);
   createBoss_Enemy($container);
+  spawnMETEO($container);
   // window.addEventListener("keydown", onKeyDown);
   window.addEventListener("keyup", onKeyUp);
   window.requestAnimationFrame(update);
@@ -384,7 +492,7 @@ function resume(){
 function update(e) {
   const currentTime = Date.now();
   const dt = (currentTime - GAME_STATE.lastTime) / 1000.0;
-
+  document.getElementById("score_f").innerHTML = `Score : ${GAME_STATE.score}`;
   if (ON_PAUSE){
     document.querySelector(".pauseui").style.display = "block";
     return;
@@ -399,13 +507,12 @@ function update(e) {
     document.querySelector(".congratulations").style.display = "block";
     return;
   }
-
   const $container = document.querySelector(".game");
   updatePlayer(dt, $container);
   updateLasers(dt, $container);
   updateEnemies(dt, $container);
   updateBoss_EnemyLasers(dt, $container);
-
+  updateMETEO(dt, $container);
   GAME_STATE.lastTime = currentTime;
   window.requestAnimationFrame(update);
 }

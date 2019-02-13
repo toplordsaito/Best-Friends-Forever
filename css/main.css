@@ -222,9 +222,9 @@ footer {
 
 
 #maxhealth{
-  width: 10em;
-  height: 1em;
-  margin: 1em;
+  width: 160px;
+  height: 16px;
+  margin: 16px;
   /* background: firebrick; */
   border-style : solid; 
   border-color: aliceblue;
@@ -238,13 +238,13 @@ footer {
 #score_f{
   position: absolute;
   background: #FFF;
-  right: 2em;
-  margin: .5em;
+  right: 32px;
+  margin: 16px;
 }
 .game #E_maxhealth{
-  width: 30em;
-  height: 1em;
-  margin: 1em;
+  width: 450px;
+  height: 16px;
+  margin: 16px;
   bottom: 0px;
   right: 10px;
   position: absolute;
@@ -259,7 +259,12 @@ footer {
 }
 
 #pausebutton{
+  margin: 8px;
   position: absolute;
   right: 0em;
-  width: 2em;
+  width: 32px;
+}
+
+.meteo{
+  position: absolute;
 }

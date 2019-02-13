@@ -34,7 +34,7 @@ const Boss_Enemy_HEALTH = 1;
 const Boss_Enemy_HORIZONTAL_PADDING = 80;
 const Boss_Enemy_VERTICAL_PADDING = 70;
 const Boss_Enemy_VERTICAL_SPACING = 80;
-const Boss_Enemy_COOLDOWN = 4;
+const Boss_Enemy_COOLDOWN = 3;
 const Boss_Enemy_COOLDOWN_RANGE = 0.2;
 const Boss_Enemy_SPEED = 2;
 const Boss_Enemy_MOVEDELAY = 500;
@@ -290,11 +290,11 @@ function createBoss_Enemy($container) {
   $element.className = "Boss_Enemy";
   $container.appendChild($element);
   const Boss_Enemy = {
-    maxcooldown: (parseInt(Math.random() * Boss_Enemy_COOLDOWN) + 1) * Boss_Enemy_COOLDOWN_RANGE + 0.6,
+    maxcooldown: (parseInt(Math.random() * Boss_Enemy_COOLDOWN) + 1) * Boss_Enemy_COOLDOWN_RANGE + 1,
     health: GAME_STATE.Boss_Enemyhealth,
     x,
     y,
-    cooldown: rand(0.5, Boss_Enemy_COOLDOWN),
+    cooldown: Boss_Enemy_COOLDOWN,
     $element
   };
   GAME_STATE.enemies.push(Boss_Enemy);

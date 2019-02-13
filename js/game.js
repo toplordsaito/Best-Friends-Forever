@@ -355,6 +355,9 @@ function createBoss_EnemyLaser($container, x, y) {
 
 function updateBoss_EnemyLasers(dt, $container) {
   const lasers = GAME_STATE.Boss_EnemyLasers;
+  if (GAME_STATE.gameOver) {
+    return;
+  }
   for (let i = 0; i < lasers.length; i++) {
     const laser = lasers[i];
     laser.x -= dt * LASER_MAX_SPEED;
@@ -511,8 +514,8 @@ function update(e) {
   updatePlayer(dt, $container);
   updateLasers(dt, $container);
   updateEnemies(dt, $container);
-  updateBoss_EnemyLasers(dt, $container);
   updateMETEO(dt, $container);
+  updateBoss_EnemyLasers(dt, $container);
   GAME_STATE.lastTime = currentTime;
   window.requestAnimationFrame(update);
 }

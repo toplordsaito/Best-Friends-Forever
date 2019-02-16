@@ -42,11 +42,16 @@ body {
   position: absolute;
 }
 .slot{
+  display: inline-block;
   background: rgba(65, 65, 65, 0.644);
   background-size: 100% 100%; 
   border-style: solid;
   height: 30px;
   width: 30px;
+  border-radius: 20px;
+  font-family: 'Kanit', sans-serif;
+  font-size: 12px;
+  text-align: center;
 }
 
 .head {
@@ -69,7 +74,6 @@ footer {
   font-family: 'Sriracha', cursive;
   box-shadow: 0 -4px 10px rgba(128, 128, 128, 0.589);
 
- 
 }
 #ingame{
   display: none;
@@ -330,6 +334,7 @@ footer {
   /* background: firebrick; */
   border-style : solid; 
   border-color: aliceblue;
+  border-radius: 7px;
 }
 #gauge{
   background: rgb(255, 115, 0);

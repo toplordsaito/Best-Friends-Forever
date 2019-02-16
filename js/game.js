@@ -489,7 +489,7 @@ function destroyBoss_Enemylaser($container, laser) {
     var x = GAME_WIDTH - 80;
     var y = Math.random() * GAME_HEIGHT + 30;
     y = clamp(y, GAME_TOP, GAME_HEIGHT - 100);
-    $element.src = `img/skill/${skill}.png`;
+    $element.src = `img/skill/${skill}.gif`;
     $element.className = "skill";
     $container.appendChild($element);
     const myskill = {name: "skill" , x, y, $element, skill};

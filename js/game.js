@@ -143,7 +143,7 @@ function updatePlayer(dt, $container) {
     GAME_STATE.playerCooldown = LASER_COOLDOWN;
   }
   if (GAME_STATE.ctrlPressed && GAME_STATE.gauge_player == MAX_GAUGE) {
-    createUltimate($container, GAME_STATE.playerX, GAME_STATE.playerY);
+    createUltimate($container, GAME_STATE.playerX - 50, GAME_STATE.playerY - 100);
   }
   if (GAME_STATE.playerCooldown > 0) {
     GAME_STATE.playerCooldown -= dt;
@@ -160,7 +160,7 @@ function createUltimate($container, x, y) {
   $element.src = "img/bullet.gif";
   $element.className = "ultimate";
   $container.appendChild($element);
-  const ultimate = { name: "ult", x, y, $element };
+  const ultimate = { name: "ult", x , y, $element };
   GAME_STATE.lasers.push(ultimate);
   // const audio = new Audio("sound/lazer.mp3");
   // audio.volume = .3;
@@ -168,7 +168,7 @@ function createUltimate($container, x, y) {
   setPosition($element, x, y);
 }
 
-function updategauge(num){
+function updategauge(){
   document.querySelector("#gauge").style.width = `${GAME_STATE.gauge_player/MAX_GAUGE*100}%`;
 }
 

@@ -98,14 +98,14 @@ footer {
 
 .game .enemy {
   position: absolute;
-  margin-left: -20px;
-  margin-top: -18px;
+  /* margin-left: -20px;
+  margin-top: -18px; */
   width: 40px;
 }
 .game .Boss_Enemy {
   position: absolute;
-  margin-left: -20px;
-  margin-top: -18px;
+  /* margin-left: -20px;
+  margin-top: -18px; */
   width: 100px;
   animation: ene-pop 1s;
 }
@@ -120,13 +120,13 @@ footer {
 }
 .game .player {
   position: absolute;
-  margin-left: -20px;
+  /* margin-left: -20px; */
   height: 80px;
 }
 
 .game .laser {
   position: absolute;
-  margin-left: -2.5px;
+  /* margin-left: -2.5px; */
   height: 50px;
 }
 .game .damaged{
@@ -138,7 +138,7 @@ footer {
 }
 .game .ultimate{
   position: absolute;
-  margin-left: -2.5px;
+  /* margin-left: -2.5px; */
   height: 300px;
 }
 .game .heal{
@@ -158,7 +158,7 @@ footer {
 
 .game .Boss_Enemy-laser {
   position: absolute;
-  margin-left: -2.5px;
+  /* margin-left: -2.5px; */
   height: 30px;
 }
 

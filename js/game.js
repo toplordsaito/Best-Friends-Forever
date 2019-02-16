@@ -22,6 +22,7 @@ const PLAYER_MAXX = GAME_WIDTH - PLAYER_WIDTH - 200;
 const PLAYER_MINY = PLAYER_HEIGHT - 70;
 const PLAYER_MAXY = GAME_HEIGHT - PLAYER_HEIGHT;
 const PLAYER_STYLE = 13;
+const MAX_GAUGE = 5;
 var PLAYER_CHAR = 1;
 
 const PLAYER_MAX_SPEED = 600.0;
@@ -55,7 +56,7 @@ var ON_PLAY = false;
 const METEO_DELAY = 1500;
 
 const GAME_STATE = {
-  gauge_player: 0,
+  gauge_player: 5,
   Boss_Enemyhealth: 1,
   lastTime: Date.now(),
   leftPressed: false,
@@ -141,9 +142,8 @@ function updatePlayer(dt, $container) {
     createLaser($container, GAME_STATE.playerX, GAME_STATE.playerY);
     GAME_STATE.playerCooldown = LASER_COOLDOWN;
   }
-  if (GAME_STATE.ctrlPressed) {
+  if (GAME_STATE.ctrlPressed && GAME_STATE.gauge_player == MAX_GAUGE) {
     createUltimate($container, GAME_STATE.playerX, GAME_STATE.playerY);
-
   }
   if (GAME_STATE.playerCooldown > 0) {
     GAME_STATE.playerCooldown -= dt;
@@ -154,6 +154,8 @@ function updatePlayer(dt, $container) {
 }
 
 function createUltimate($container, x, y) {
+  GAME_STATE.gauge_player = 0;
+  updategauge();
   const $element = document.createElement("img"); 
   $element.src = "img/bullet.gif";
   $element.className = "ultimate";
@@ -165,22 +167,10 @@ function createUltimate($container, x, y) {
   // audio.play();
   setPosition($element, x, y);
 }
-// function updateUltimate(dt, $container) {
-//   const ultimate_num = GAME_STATE.ultimate_num;
-//   for (let i = 0; i < ultimate_num.length; i++) {
-//     const ultimate = ultimate_num[i];
-//     ultimate.x += dt * LASER_MAX_SPEED;
-//     if (ultimate.x > GAME_WIDTH) {
-//       destroyLaser($container, ultimate);
-//     }
-//     setPosition(ultimate.$element, ultimate.x, ultimate.y);
-//     const r1 = ultimate.$element.getBoundingClientRect();
-//     eachENEMY($container, r1, ultimate);
-//     eachMETEO($container, r1, ultimate);
-//   }
-//   GAME_STATE.ultimate_num = GAME_STATE.ultimate_num.filter(e => !e.isDead);
-// }
 
+function updategauge(num){
+  document.querySelector("#gauge").style.width = `${GAME_STATE.gauge_player/MAX_GAUGE*100}%`;
+}
 
 function createLaser($container, x, y) {
   const $element = document.createElement("img"); 
@@ -218,13 +208,68 @@ function destroyLaser($container, laser) {
 }
 
 
+function eachENEMY($container, r1, laser){
+  const enemies = GAME_STATE.enemies;
+  for (let j = 0; j < enemies.length; j++) {
+    const Boss_Enemy = enemies[j];
+    if (Boss_Enemy.isDead) continue;
+    const r2 = Boss_Enemy.$element.getBoundingClientRect();
+    if (rectsIntersect(r1, r2)) {
+      // Boss_Enemy was hit
+      Boss_Enemy.health -= 1;
+      document.querySelector("#E_health").style.width = `${Boss_Enemy.health/ GAME_STATE.Boss_Enemyhealth * 100}%`;
+      if (Boss_Enemy.health <= 0){
+      // boom($Boss_Enemy, Boss_Enemy.x, Boss_Enemy.y+GAME_STATE.Boss_EnemyY);
+      boom($container, laser.x, laser.y);
+      heal($container, GAME_STATE.playerX, GAME_STATE.playerY, GAME_HEAL);
+      
+      destroyBoss_Enemy($container, Boss_Enemy);
+      
+      GAME_STATE.score += 10 * GAME_STATE.Boss_Enemyhealth;
+      }
+      if (laser.name != "ult"){
+        destroyLaser($container, laser);
+        }
+      break;
+    }
+  }
+}
+
+function eachMETEO($container, r1, laser){
+  if (laser.isDead) return;
+  const meteo = GAME_STATE.Boss_EnemyLasers;
+  for (let j = 0; j < meteo.length; j++) {
+    const mete_o = meteo[j];
+    if (mete_o.isDead) continue;
+    const r2 = mete_o.$element.getBoundingClientRect();
+    if (rectsIntersect(r1, r2) && mete_o.name === "meteo") {
+      // mete_o was hit
+      mete_o.hp -= 1;
+      console.log(mete_o.hp);
+      if (mete_o.hp <= 0){
+      // boom($mete_o, mete_o.x, mete_o.y+GAME_STATE.mete_oY);
+      boom($container, laser.x, laser.y);
+      destroyBoss_Enemylaser($container, mete_o);
+      GAME_STATE.score += 1;
+      }
+      if (laser.name != "ult"){
+      destroyLaser($container, laser);
+      }
+      break;
+    }
+  }
+}
+
+
+
 
 
 
 function damaged($container, x, y, num) {
   const damaged = document.createElement("div");
   GAME_STATE.player_health -= num;
-  GAME_STATE.gauge_player = Math.min(5, GAME_STATE.gauge_player + num);
+  GAME_STATE.gauge_player = Math.min(MAX_GAUGE, GAME_STATE.gauge_player + num);
+  updategauge();
   damaged.innerHTML = `${num}`;
   damaged.className = "damaged";
   $container.appendChild(damaged);
@@ -270,53 +315,7 @@ function boom($container, x, y) {
 
 
 
-function eachENEMY($container, r1, laser){
-  const enemies = GAME_STATE.enemies;
-  for (let j = 0; j < enemies.length; j++) {
-    const Boss_Enemy = enemies[j];
-    if (Boss_Enemy.isDead) continue;
-    const r2 = Boss_Enemy.$element.getBoundingClientRect();
-    if (rectsIntersect(r1, r2)) {
-      // Boss_Enemy was hit
-      Boss_Enemy.health -= 1;
-      document.querySelector("#E_health").style.width = `${Boss_Enemy.health/ GAME_STATE.Boss_Enemyhealth * 100}%`;
-      if (Boss_Enemy.health <= 0){
-      // boom($Boss_Enemy, Boss_Enemy.x, Boss_Enemy.y+GAME_STATE.Boss_EnemyY);
-      boom($container, laser.x, laser.y);
-      heal($container, GAME_STATE.playerX, GAME_STATE.playerY, GAME_HEAL);
-      
-      destroyBoss_Enemy($container, Boss_Enemy);
-      
-      GAME_STATE.score += 10 * GAME_STATE.Boss_Enemyhealth;
-      }
-      destroyLaser($container, laser);
-      break;
-    }
-  }
-}
 
-function eachMETEO($container, r1, laser){
-  if (laser.isDead) return;
-  const meteo = GAME_STATE.Boss_EnemyLasers;
-  for (let j = 0; j < meteo.length; j++) {
-    const mete_o = meteo[j];
-    if (mete_o.isDead) continue;
-    const r2 = mete_o.$element.getBoundingClientRect();
-    if (rectsIntersect(r1, r2) && mete_o.name === "meteo") {
-      // mete_o was hit
-      mete_o.hp -= 1;
-      console.log(mete_o.hp);
-      if (mete_o.hp <= 0){
-      // boom($mete_o, mete_o.x, mete_o.y+GAME_STATE.mete_oY);
-      boom($container, laser.x, laser.y);
-      destroyBoss_Enemylaser($container, mete_o);
-      GAME_STATE.score += 1;
-      }
-      destroyLaser($container, laser);
-      break;
-    }
-  }
-}
 
 
 

@@ -305,6 +305,7 @@ footer {
   border-style : solid; 
   border-color: aliceblue;
   position: absolute;
+  border-radius: 7px;
 }
 #P_health{
   background: rgb(255, 0, 0);
@@ -316,6 +317,7 @@ footer {
   background: #FFF;
   right: 32px;
   margin: 16px;
+  font-family: 'Kanit', sans-serif;
 }
 .game #E_maxhealth{
   width: 450px;
@@ -346,6 +348,7 @@ footer {
   /* background: firebrick; */
   border-style : solid; 
   border-color: aliceblue;
+  border-radius: 7px;
 }
 @keyframes wipwap{
   0%{
@@ -359,6 +362,7 @@ footer {
   background: rgb(255, 187, 0);
   width: 100%;
   height: 100%;
+  
 }
 
 #pausebutton{
@@ -376,4 +380,10 @@ footer {
   border-radius: 15px;
   animation: move-up 2s;
   animation-fill-mode: forwards;
+}
+
+#itemslot {
+  margin: 10px;
+  left: 200px;
+  color: #fff;
 }

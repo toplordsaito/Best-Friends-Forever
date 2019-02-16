@@ -126,6 +126,11 @@ footer {
   color: red;
   font-family: 'Hanalei Fill', cursive;
 }
+.game .ultimate{
+  position: absolute;
+  margin-left: -2.5px;
+  height: 100px;
+}
 .game .heal{
   position: absolute;
   margin-left: 15px; 

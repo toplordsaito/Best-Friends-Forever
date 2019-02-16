@@ -268,9 +268,12 @@ footer {
   border-color: aliceblue;
 }
 #gauge{
-  background: rgb(255, 187, 0);
+  background: rgb(255, 115, 0);
   width: 100%;
   height: 100%;
+}
+.fullgauge{
+  animation: .2s wipwap infinite;
 }
 #Max_gauge{
   width: 200px;
@@ -282,6 +285,14 @@ footer {
   /* background: firebrick; */
   border-style : solid; 
   border-color: aliceblue;
+}
+@keyframes wipwap{
+  0%{
+    background: #e02d00
+  }
+  100%{
+    background: #0f00e0
+  }
 }
 #E_health{
   background: rgb(255, 187, 0);

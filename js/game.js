@@ -56,7 +56,7 @@ var ON_PLAY = false;
 const METEO_DELAY = 1500;
 
 const GAME_STATE = {
-  gauge_player: 5,
+  gauge_player: 0,
   Boss_Enemyhealth: 1,
   lastTime: Date.now(),
   leftPressed: false,
@@ -169,7 +169,14 @@ function createUltimate($container, x, y) {
 }
 
 function updategauge(){
-  document.querySelector("#gauge").style.width = `${GAME_STATE.gauge_player/MAX_GAUGE*100}%`;
+  mygauge = document.querySelector("#gauge");
+  if(GAME_STATE.gauge_player == 5){
+    mygauge.classList.add("fullgauge");
+  }
+  else{
+    mygauge.classList.remove("fullgauge");
+  }
+  mygauge.style.width = `${GAME_STATE.gauge_player/MAX_GAUGE*100}%`;
 }
 
 function createLaser($container, x, y) {
@@ -490,6 +497,7 @@ function spawnMETEO($container){
 
 
 function init() {
+  updategauge();
   ON_PLAY = true;
   ON_PAUSE = false;
   document.querySelector(".gui").style.display = "none";

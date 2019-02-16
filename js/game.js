@@ -29,6 +29,8 @@ const MAX_GAUGE = 5;
 var PLAYER_CHAR = 1;
 const num_skill = 2;
 
+const MAX_skill_spaw_delay = 10;
+
 const PLAYER_MAX_SPEED = 600.0;
 const METEO_SPEED = 200.0;
 const LASER_MAX_SPEED = 300.0;
@@ -57,6 +59,7 @@ var ON_PLAY = false;
 
 
 const GAME_STATE = {
+  skill_spaw: 10,
   MAX_MATEO_DELAY: 1.5,
   METEO_DELAY: 1.5,
   gauge_player: 0,
@@ -434,11 +437,22 @@ function updateBoss_EnemyLasers(dt, $container) {
     const r2 = player.getBoundingClientRect();
     if (rectsIntersect(r1, r2)) {
       // Player was hit
-    damaged($container, laser.x, laser.y, Boss_Enemy_Damage);
-    destroyBoss_Enemylaser($container, laser);
-      if (GAME_STATE.player_health <= 0){
-        destroyPlayer($container, player);
+      if(laser.name == "skill"){
+        for(let i = 0; i < 3; i++){
+          if (GAME_STATE.skillslot[i] == 0){
+            GAME_STATE.skillslot[i] = laser.skill;
+            updateslot();
+            break;
+          }
+        }
       }
+      else{
+      damaged($container, laser.x, laser.y, Boss_Enemy_Damage);
+        if (GAME_STATE.player_health <= 0){
+          destroyPlayer($container, player);
+        }
+      }
+      destroyBoss_Enemylaser($container, laser);
       break;
     }
   }
@@ -474,7 +488,7 @@ function destroyBoss_Enemylaser($container, laser) {
     skill = parseInt(Math.random() * num_skill) + 1;
     var x = GAME_WIDTH - 80;
     var y = Math.random() * GAME_HEIGHT + 30;
-    y = clamp(y, GAME_TOP, GAME_HEIGHT);
+    y = clamp(y, GAME_TOP, GAME_HEIGHT - 100);
     $element.src = `img/skill/${skill}.png`;
     $element.className = "skill";
     $container.appendChild($element);
@@ -512,7 +526,6 @@ function SpecialSkill(slot){
 function spawnMETEO(dt, $container){
     if (GAME_STATE.METEO_DELAY <= 0){
       createMETEO($container);
-      createSkill($container);
       GAME_STATE.METEO_DELAY = GAME_STATE.MAX_MATEO_DELAY;
     }
     else{
@@ -520,6 +533,15 @@ function spawnMETEO(dt, $container){
     }
 }
 
+function spawnSKILL(dt, $container){
+  if (GAME_STATE.skill_spaw <= 0){
+    createSkill($container);
+    GAME_STATE.skill_spaw = MAX_skill_spaw_delay;
+  }
+  else{
+    GAME_STATE.skill_spaw -= dt;
+  }
+}
 
 
 
@@ -597,6 +619,7 @@ function update(e) {
   }
   const $container = document.querySelector(".game");
   spawnMETEO(dt, $container);
+  spawnSKILL(dt, $container);
   updatePlayer(dt, $container);
   // updateUltimate(dt, $container);
   updateEnemies(dt, $container);

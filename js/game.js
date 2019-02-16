@@ -502,7 +502,7 @@ function destroyBoss_Enemylaser($container, laser) {
 function updateslot(){
   slot = GAME_STATE.skillslot
   for(let i = 0; i < slot.length; i++){
-    document.querySelector(`.slot${i+1}`).style.background = `url('img/skill/${GAME_STATE.skillslot[i]}.gif')`;
+    document.querySelector(`.slot${i+1}`).src = `img/skill/${GAME_STATE.skillslot[i]}.gif`;
   }
 }
 

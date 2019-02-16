@@ -44,7 +44,6 @@ body {
 .slot{
   display: inline-block;
   background: rgba(65, 65, 65, 0.644);
-  background-size: 100% 100%; 
   border-style: solid;
   height: 30px;
   width: 30px;
@@ -52,6 +51,14 @@ body {
   font-family: 'Kanit', sans-serif;
   font-size: 12px;
   text-align: center;
+  overflow: hidden;
+}
+.slot img{
+  width: 100%;
+}
+.slot p{
+  position: absolute;
+  top: 0px;
 }
 
 .head {
@@ -84,7 +91,7 @@ footer {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: url("../img/Background/lemon.gif");
+  background-image: url("../img/Background/squre.gif");
   background-size: 100%
 }
 .game {
@@ -371,8 +378,8 @@ footer {
   
 }
 .skill{
-  width: 20px;
-  height: 20px;
+  width: 100px;
+  height: 100px;
   position: absolute;
 }
 

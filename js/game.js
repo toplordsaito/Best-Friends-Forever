@@ -28,7 +28,7 @@ var PLAYER_CHAR = 1;
 const PLAYER_MAX_SPEED = 600.0;
 const METEO_SPEED = 200.0;
 const LASER_MAX_SPEED = 300.0;
-const LASER_COOLDOWN = 0.5;
+var LASER_COOLDOWN = 1;
 const START_BossX = GAME_WIDTH;
 const START_BossY = GAME_HEIGHT /2 ;
 
@@ -46,16 +46,15 @@ const Boss_Enemy_MAXX = GAME_WIDTH - 60;
 const Boss_Enemy_MINY = 70;
 const Boss_Enemy_MAXY = GAME_HEIGHT - 80;
 const Boss_Enemy_STYLE = 11;
-var GAME_HEAL = 1;
+var GAME_HEAL = 2;
 var Boss_Enemy_Damage = 1;
 var ON_PAUSE = true;
 var ON_PLAY = false;
 
 
-
-const METEO_DELAY = 1500;
-
 const GAME_STATE = {
+  MAX_MATEO_DELAY: 1.5,
+  METEO_DELAY: 1.5,
   gauge_player: 0,
   Boss_Enemyhealth: 1,
   lastTime: Date.now(),
@@ -79,7 +78,13 @@ const GAME_STATE = {
   gameOver: false,
   Boss_EnemyX: 0,
   Boss_EnemyY: 0,
-  score: 0
+  score: 0,
+  cdMETEO: 10,
+  skillslot: {
+    slot1: 0,
+    slot2: 0,
+    slot3: 0,
+  }
 };
 
 function rectsIntersect(r1, r2) {
@@ -388,11 +393,17 @@ function updateEnemies(dt, $container) {
 
 function destroyBoss_Enemy($container, Boss_Enemy) {
   $container.removeChild(Boss_Enemy.$element);
+  Boss_Enemy.isDead = true;
+  levelup($container);
+}
+
+
+function levelup($container){
+  GAME_STATE.MAX_MATEO_DELAY = Math.max(.5, GAME_STATE.MAX_MATEO_DELAY - 0.03)
+  LASER_COOLDOWN = Math.max(.2, LASER_COOLDOWN - 0.05);
+  GAME_STATE.Boss_Enemyhealth += 2;
   GAME_STATE.Boss_EnemyX = 0;
   GAME_STATE.Boss_EnemyY = 0;
-  Boss_Enemy.isDead = true;
-  console.log(GAME_STATE.Boss_Enemyhealth);
-  GAME_STATE.Boss_Enemyhealth *= 2;
   setTimeout(function(){ createBoss_Enemy($container)}, 1000);
 }
 
@@ -455,36 +466,28 @@ function destroyBoss_Enemylaser($container, laser) {
     GAME_STATE.Boss_EnemyLasers.push(mymeteo);
     setPosition($element, x, y);
   }
-  // function updateMETEO(dt, $container) {
-  //   const B_METEO = GAME_STATE.meteo;
-  //   for (let i = 0; i < B_METEO.length; i++) {
-  //     const meteo = B_METEO[i];
-  //     meteo.x -= dt * METEO_SPEED;
-  //     if (meteo.x < 0) {
-  //        destroyMETEO($container, meteo);
-  //     }
-  //     setPosition(meteo.$meteo, meteo.x, meteo.y);
-  //     const r1 = meteo.$meteo.getBoundingClientRect();
-  //     const player = document.querySelector(".player");
-  //     const r2 = player.getBoundingClientRect();
-  //     if (rectsIntersect(r1, r2)) {
-  //       // Player was hit
-  //     GAME_STATE.player_health -= 1;
-  //     damaged($container, meteo.x, meteo.y, Boss_Enemy_Damage);
-  //     destroyMETEO($container, meteo);
-  //       if (GAME_STATE.player_health <= 0){
-  //         destroyPlayer($container, player);
-  //       }
-  //       break;
-  //     }
-  //   }
-  //   GAME_STATE.meteo = GAME_STATE.meteo.filter(e => !e.isDead);
-  // }
-function spawnMETEO($container){
-    setInterval(function(){
-      if (!ON_PAUSE && !GAME_STATE.gameOver){
-      createMETEO($container)}
-    }, METEO_DELAY);
+
+
+
+function SpecialSkill($container, skill_code){
+  if (skill_code === 1){
+    GAME_STATE.player_health = PLAYER_HEALTH;
+  }
+  else if(skill_code === 2){
+    GAME_STATE.gauge_player = MAX_GAUGE;
+  }
+}
+
+
+function spawnMETEO(dt, $container){
+    if (GAME_STATE.METEO_DELAY <= 0){
+      createMETEO($container)
+      GAME_STATE.METEO_DELAY = GAME_STATE.MAX_MATEO_DELAY;
+    }
+    else{
+      GAME_STATE.METEO_DELAY -= dt;
+    }
+    
   
 }
 
@@ -506,7 +509,6 @@ function init() {
   setInterval(enemymove, Boss_Enemy_MOVEDELAY);
   createPlayer($container);
   createBoss_Enemy($container);
-  spawnMETEO($container);
   // window.addEventListener("keydown", onKeyDown);
   window.addEventListener("keyup", onKeyUp);
   window.requestAnimationFrame(update);
@@ -564,6 +566,7 @@ function update(e) {
     return;
   }
   const $container = document.querySelector(".game");
+  spawnMETEO(dt, $container);
   updatePlayer(dt, $container);
   // updateUltimate(dt, $container);
   updateEnemies(dt, $container);

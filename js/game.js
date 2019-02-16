@@ -87,7 +87,7 @@ const GAME_STATE = {
   Boss_EnemyY: 0,
   score: 0,
   cdMETEO: 10,
-  skillslot: [1, 2, 0]
+  skillslot: [0, 0, 0]
 };
 
 function rectsIntersect(r1, r2) {
@@ -502,7 +502,7 @@ function destroyBoss_Enemylaser($container, laser) {
 function updateslot(){
   slot = GAME_STATE.skillslot
   for(let i = 0; i < slot.length; i++){
-    document.querySelector(`.slot${i+1}`).style.background = `url('img/skill/${GAME_STATE.skillslot[i]}.png')`;
+    document.querySelector(`.slot${i+1}`).style.background = `url('img/skill/${GAME_STATE.skillslot[i]}.gif')`;
   }
 }
 
@@ -536,7 +536,7 @@ function spawnMETEO(dt, $container){
 function spawnSKILL(dt, $container){
   if (GAME_STATE.skill_spaw <= 0){
     createSkill($container);
-    GAME_STATE.skill_spaw = MAX_skill_spaw_delay;
+    GAME_STATE.skill_spaw = MAX_skill_spaw_delay + (Math.random() * 60);
   }
   else{
     GAME_STATE.skill_spaw -= dt;

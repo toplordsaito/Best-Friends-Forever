@@ -6,6 +6,9 @@ const KEY_CODE_DOWN = 40;
 const KEY_CODE_P = 80;
 const KEY_CODE_R = 82;
 const KEY_CODE_CTRL = 17;
+const KEY_CODE_Z = 90;
+const KEY_CODE_X = 88;
+const KEY_CODE_C = 67;
 
 
 const GAME_WIDTH = 800;
@@ -24,6 +27,7 @@ const PLAYER_MAXY = GAME_HEIGHT - PLAYER_HEIGHT;
 const PLAYER_STYLE = 13;
 const MAX_GAUGE = 5;
 var PLAYER_CHAR = 1;
+const num_skill = 2;
 
 const PLAYER_MAX_SPEED = 600.0;
 const METEO_SPEED = 200.0;
@@ -80,11 +84,7 @@ const GAME_STATE = {
   Boss_EnemyY: 0,
   score: 0,
   cdMETEO: 10,
-  skillslot: {
-    slot1: 0,
-    slot2: 0,
-    slot3: 0,
-  }
+  skillslot: [1, 2, 0]
 };
 
 function rectsIntersect(r1, r2) {
@@ -469,26 +469,55 @@ function destroyBoss_Enemylaser($container, laser) {
 
 
 
-function SpecialSkill($container, skill_code){
+  function createSkill($container) {
+    const $element = document.createElement("img"); 
+    skill = parseInt(Math.random() * num_skill) + 1;
+    var x = GAME_WIDTH - 80;
+    var y = Math.random() * GAME_HEIGHT + 30;
+    y = clamp(y, GAME_TOP, GAME_HEIGHT);
+    $element.src = `img/skill/${skill}.png`;
+    $element.className = "skill";
+    $container.appendChild($element);
+    const myskill = {name: "skill" , x, y, $element, skill};
+    GAME_STATE.Boss_EnemyLasers.push(myskill);
+    setPosition($element, x, y);
+  }
+  
+
+
+function updateslot(){
+  slot = GAME_STATE.skillslot
+  for(let i = 0; i < slot.length; i++){
+    document.querySelector(`.slot${i+1}`).style.background = `url('img/skill/${GAME_STATE.skillslot[i]}.png')`;
+  }
+}
+
+
+
+function SpecialSkill(slot){
+  skill_code = GAME_STATE.skillslot[slot]
   if (skill_code === 1){
     GAME_STATE.player_health = PLAYER_HEALTH;
+    updatehealth();
   }
   else if(skill_code === 2){
     GAME_STATE.gauge_player = MAX_GAUGE;
+    updategauge();
   }
+  GAME_STATE.skillslot[slot] = 0;
+  updateslot();
 }
 
 
 function spawnMETEO(dt, $container){
     if (GAME_STATE.METEO_DELAY <= 0){
-      createMETEO($container)
+      createMETEO($container);
+      createSkill($container);
       GAME_STATE.METEO_DELAY = GAME_STATE.MAX_MATEO_DELAY;
     }
     else{
       GAME_STATE.METEO_DELAY -= dt;
     }
-    
-  
 }
 
 
@@ -500,6 +529,7 @@ function spawnMETEO(dt, $container){
 
 
 function init() {
+  updateslot();
   updategauge();
   ON_PLAY = true;
   ON_PAUSE = false;
@@ -599,6 +629,12 @@ function onKeyDown(e) {
       GAME_STATE.downPressed = true;
     } else if (e.keyCode === KEY_CODE_CTRL){
       GAME_STATE.ctrlPressed = true;
+    } else if (e.keyCode === KEY_CODE_Z){
+      SpecialSkill(0)
+    } else if (e.keyCode === KEY_CODE_X){
+      SpecialSkill(1)
+    } else if (e.keyCode === KEY_CODE_C){
+      SpecialSkill(2)
     }
   } 
   if (e.keyCode === KEY_CODE_P) {

@@ -131,6 +131,12 @@ footer {
   position: relative;
   overflow: hidden;
 
+
+}
+#stack_bar{
+  font-size: 40px;
+  right: 300px;
+  position: absolute;
 }
 
 .homePage:first-child {
@@ -218,6 +224,11 @@ footer {
   font-family: 'Hanalei Fill', cursive;
 }
 .game .ultimate{
+  position: absolute;
+  /* margin-left: -2.5px; */
+  height: 300px;
+}
+.game .stack{
   position: absolute;
   /* margin-left: -2.5px; */
   height: 300px;

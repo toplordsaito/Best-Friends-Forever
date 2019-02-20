@@ -58,7 +58,8 @@ body {
 }
 .slot p{
   position: absolute;
-  top: 0px;
+  top: 23px;
+  transform: translate(12px, 0px);
 }
 
 .head {
@@ -162,6 +163,7 @@ footer {
   opacity: 0;
   animation: move-up 2.5s;
   animation-fill-mode: forwards;
+  transform: translate(0px, 20px)
 }
 
 @keyframes pop-up-h1 {
@@ -336,11 +338,14 @@ footer {
   height: 100%;
 }
 #score_f{
-  position: absolute;
+  position: absolute; 
   background: #FFF;
   right: 32px;
   margin: 16px;
   font-family: 'Kanit', sans-serif;
+  width: 80px;
+  text-align: center;
+  border-radius: 10px;
 }
 .game #E_maxhealth{
   width: 450px;
@@ -362,6 +367,9 @@ footer {
 .fullgauge{
   animation: .2s wipwap infinite;
 }
+.shake_gauge{
+  animation: .5s shake infinite;
+}
 #Max_gauge{
   width: 200px;
   height: 16px;
@@ -382,6 +390,21 @@ footer {
     background: #0f00e0
   }
 }
+
+@keyframes shake {
+  0% { transform: translate(1px, 1px) rotate(0deg); }
+  10% { transform: translate(-1px, -2px) rotate(-1deg); }
+  20% { transform: translate(-3px, 0px) rotate(1deg); }
+  30% { transform: translate(3px, 2px) rotate(0deg); }
+  40% { transform: translate(1px, -1px) rotate(1deg); }
+  50% { transform: translate(-1px, 2px) rotate(-1deg); }
+  60% { transform: translate(-3px, 1px) rotate(0deg); }
+  70% { transform: translate(3px, 1px) rotate(-1deg); }
+  80% { transform: translate(-1px, -1px) rotate(1deg); }
+  90% { transform: translate(1px, 2px) rotate(0deg); }
+  100% { transform: translate(1px, -2px) rotate(-1deg); }
+}
+
 #E_health{
   background: rgb(255, 187, 0);
   width: 100%;
@@ -389,13 +412,14 @@ footer {
   
 }
 .skill{
-  width: 100px;
-  height: 100px;
+  width: 40px;
+  height: 40px;
   position: absolute;
 }
 
 #pausebutton{
   margin: 8px;
+  margin-top: 12px;
   position: absolute;
   right: 0em;
   width: 32px;
@@ -415,4 +439,20 @@ footer {
   margin: 10px;
   left: 200px;
   color: #fff;
+}
+
+.progressBar {
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.733);
+  height: 5px;
+  transform: translate(0px, 5px);
+  border-radius: 20px;
+
+}
+
+.percenBar {
+  height: 5px;
+  background-color: rgb(0, 255, 136);
+  width: 50%;
+  border-radius: 20px;
 }

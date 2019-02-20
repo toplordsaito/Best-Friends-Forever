@@ -186,11 +186,14 @@ function createUltimate($container, x, y) {
 
 function updategauge(){
   mygauge = document.querySelector("#gauge");
+  myfull_gauge = document.querySelector("#Max_gauge");
   if(GAME_STATE.gauge_player == 5){
     mygauge.classList.add("fullgauge");
+    myfull_gauge.classList.add("shake_gauge");
   }
   else{
     mygauge.classList.remove("fullgauge");
+    myfull_gauge.classList.remove("shake_gauge");
   }
   mygauge.style.width = `${GAME_STATE.gauge_player/MAX_GAUGE*100}%`;
 }
@@ -214,8 +217,8 @@ function createStack($container, x, y) {
 
 
 function updatestack(){
-  mystack = document.querySelector("#stack_bar");
-  mystack.innerText = `${GAME_STATE.player_stack}`;
+  mystack = document.querySelector(".percenBar");
+  mystack.style.width = `${GAME_STATE.player_stack*100/20}%`;
 }
 
 

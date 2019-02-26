@@ -90,7 +90,8 @@ const GAME_STATE = {
   Boss_EnemyY: 0,
   score: 0,
   cdMETEO: 10,
-  skillslot: [0, 0, 0]
+  skillslot: [0, 0, 0],
+  devil: false
 };
 
 function rectsIntersect(r1, r2) {
@@ -150,14 +151,22 @@ function updatePlayer(dt, $container) {
   GAME_STATE.playerY = clamp(GAME_STATE.playerY, PLAYER_MINY, PLAYER_MAXY,);
 
   if (GAME_STATE.spacePressed && GAME_STATE.playerCooldown <= 0) {
-    createLaser($container, GAME_STATE.playerX, GAME_STATE.playerY);
+    if (GAME_STATE.devil){
+      createUltimate($container, GAME_STATE.playerX - 50, GAME_STATE.playerY - 100);
+    }
+    else {
+      createLaser($container, GAME_STATE.playerX, GAME_STATE.playerY);
+    }
     GAME_STATE.playerCooldown = LASER_COOLDOWN;
   }
   if (GAME_STATE.ctrlPressed && GAME_STATE.gauge_player == MAX_GAUGE) {
-    createUltimate($container, GAME_STATE.playerX - 50, GAME_STATE.playerY - 100);
+    //createUltimate($container, GAME_STATE.playerX - 50, GAME_STATE.playerY - 100);
+    devil();
   }
   if (GAME_STATE.shiftPressd && GAME_STATE.player_stack == MAX_STACK) {
-    createStack($container, GAME_STATE.playerX - 50, GAME_STATE.playerY - 100);
+    GAME_STATE.player_stack = 0;
+    updatestack();
+    createUltimate($container, GAME_STATE.playerX - 50, GAME_STATE.playerY - 100, GAME_STATE.devil);
   }
   if (GAME_STATE.playerCooldown > 0) {
     GAME_STATE.playerCooldown -= dt;
@@ -167,12 +176,27 @@ function updatePlayer(dt, $container) {
   setPosition(player, GAME_STATE.playerX, GAME_STATE.playerY);
 }
 
-function createUltimate($container, x, y) {
+function devil(){
   GAME_STATE.gauge_player = 0;
   updategauge();
+  player = document.querySelector(".player");
+  player.src = `img/player/devil.gif`;
+  GAME_STATE.devil = true;
+  setTimeout(function(){
+    player.src = `img/player/${PLAYER_CHAR}.gif`;
+    GAME_STATE.devil = false;
+  }, 5000);
+}
+
+
+function createUltimate($container, x, y, b_size) {
   const $element = document.createElement("img"); 
   $element.src = "img/bullet.gif";
   $element.className = "ultimate";
+  if (b_size){
+    $element.style.width = "600px";
+    $element.style.height = "600px";
+  }
   $container.appendChild($element);
   const ultimate = { name: "ult", damage: 1, x , y, $element };
   GAME_STATE.lasers.push(ultimate);

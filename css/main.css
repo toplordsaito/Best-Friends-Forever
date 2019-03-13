@@ -47,6 +47,7 @@ body {
   border-style: solid;
   height: 30px;
   width: 30px;
+  border-width: 2px;
   border-radius: 20px;
   font-family: 'Kanit', sans-serif;
   font-size: 12px;
@@ -131,13 +132,6 @@ footer {
   background: url(../img/background-blue.png);
   position: relative;
   overflow: hidden;
-
-
-}
-#stack_bar{
-  font-size: 40px;
-  right: 300px;
-  position: absolute;
 }
 
 .homePage:first-child {
@@ -343,7 +337,7 @@ footer {
   right: 32px;
   margin: 16px;
   font-family: 'Kanit', sans-serif;
-  width: 80px;
+  width: 100px;
   text-align: center;
   border-radius: 10px;
 }
@@ -363,6 +357,7 @@ footer {
   background: rgb(255, 115, 0);
   width: 100%;
   height: 100%;
+  border-radius: 3px;
 }
 .fullgauge{
   animation: .2s wipwap infinite;
@@ -442,11 +437,13 @@ footer {
 }
 
 .progressBar {
-  width: 100%;
+  width: 200px;
   background-color: rgba(255, 255, 255, 0.733);
-  height: 5px;
-  transform: translate(0px, 5px);
   border-radius: 20px;
+  margin: 5px;
+  bottom: 0px;
+  left: 24px;
+  position: absolute;
 
 }
 

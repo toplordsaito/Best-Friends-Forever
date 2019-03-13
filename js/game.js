@@ -811,3 +811,7 @@ function nextstory(){
   }
 }
 window.addEventListener("keydown", onKeyDown);
+
+document.querySelector(".story").addEventListener("click", function(){
+  nextstory(); 
+  });

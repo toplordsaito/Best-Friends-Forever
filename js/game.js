@@ -5,11 +5,12 @@ const KEY_CODE_UP = 38;
 const KEY_CODE_DOWN = 40;
 const KEY_CODE_P = 80;
 const KEY_CODE_R = 82;
-const KEY_CODE_CTRL = 17;
+const KEY_CODE_ulti = 17;
 const KEY_CODE_Z = 90;
 const KEY_CODE_X = 88;
 const KEY_CODE_C = 67;
-const KEY_CODE_shift = 16;
+const KEY_CODE_SP_skill = 16;
+const KEY_CODE_ENTER = 13;
 
 const GAME_WIDTH = 800;
 const GAME_HEIGHT = 600;
@@ -39,11 +40,7 @@ var LASER_COOLDOWN = 1;
 const START_BossX = GAME_WIDTH;
 const START_BossY = GAME_HEIGHT /2 ;
 
-const ENEMIES_PER_ROW = 4;
 const Boss_Enemy_HEALTH = 1;
-const Boss_Enemy_HORIZONTAL_PADDING = 80;
-const Boss_Enemy_VERTICAL_PADDING = 70;
-const Boss_Enemy_VERTICAL_SPACING = 80;
 const Boss_Enemy_COOLDOWN = 3;
 const Boss_Enemy_COOLDOWN_RANGE = 0.2;
 const Boss_Enemy_SPEED = 2;
@@ -51,16 +48,16 @@ const Boss_Enemy_MOVEDELAY = 500;
 const Boss_Enemy_MINX = 0;
 const Boss_Enemy_MAXX = GAME_WIDTH - 60;
 const Boss_Enemy_MINY = 70;
-const Boss_Enemy_MAXY = GAME_HEIGHT - 80;
+const Boss_Enemy_MAXY = GAME_HEIGHT - 100;
 const Boss_Enemy_STYLE = 11;
 var GAME_HEAL = 2;
 var Boss_Enemy_Damage = 1;
 var ON_PAUSE = true;
 var ON_PLAY = false;
-
+var ON_STORY = false;
 
 const GAME_STATE = {
-  player_stack: 20,
+  player_stack: 0,
   skill_spaw: 10,
   MAX_MATEO_DELAY: 1.5,
   METEO_DELAY: 1.5,
@@ -354,7 +351,7 @@ function damaged($container, x, y, num) {
   GAME_STATE.player_health -= num;
   GAME_STATE.gauge_player = Math.min(MAX_GAUGE, GAME_STATE.gauge_player + num);
   updategauge();
-  damaged.innerHTML = `${num}`;
+  damaged.innerHTML = `-${num}`;
   damaged.className = "damaged";
   $container.appendChild(damaged);
   setPosition(damaged, x, y);
@@ -370,7 +367,7 @@ function updatehealth(){
 function heal($container, x, y, num) {
   const heal = document.createElement("div");
   GAME_STATE.player_health = Math.min(10, GAME_STATE.player_health + num);
-  heal.innerHTML = `${num}`;
+  heal.innerHTML = `+${num}`;
   heal.className = "heal";
   $container.appendChild(heal);
   setPosition(heal, x, y);
@@ -416,19 +413,21 @@ function createBoss_Enemy($container) {
     document.querySelector("#E_health").style.width = `100%`;
   const $element = document.createElement("img");
   $element.src = `img/enemy/${parseInt(Math.random() * Boss_Enemy_STYLE) + 1}.gif`;
-  $element.style.width = `${parseInt(Math.random() * 3) * 40 + 40}px`;
+  var size = parseInt(Math.random() * 3) * 40 + 80;
+  $element.style.width = `${size}px`;
   $element.className = "Boss_Enemy";
   $container.appendChild($element);
   const Boss_Enemy = {
     maxcooldown: (parseInt(Math.random() * Boss_Enemy_COOLDOWN) + 1) * Boss_Enemy_COOLDOWN_RANGE + 1,
     health: GAME_STATE.Boss_Enemyhealth,
-    x,
+    x: x-100,
     y,
+    size,
     cooldown: Boss_Enemy_COOLDOWN,
     $element
   };
   GAME_STATE.enemies.push(Boss_Enemy);
-  setPosition($element, x, y);
+  setPosition($element, Boss_Enemy.x, Boss_Enemy.y);
 }
 
 
@@ -445,12 +444,14 @@ function updateEnemies(dt, $container) {
     const Boss_Enemy = enemies[i];
     var x = Boss_Enemy.x + GAME_STATE.Boss_EnemyX;
     var y = Boss_Enemy.y + GAME_STATE.Boss_EnemyY;
-    x = clamp(x, Boss_Enemy_MINX, Boss_Enemy_MAXX);
-    y = clamp(y, Boss_Enemy_MINY, Boss_Enemy_MAXY);
+    var maxy = Boss_Enemy_MAXY- Boss_Enemy.size/2,
+        maxx = Boss_Enemy_MAXX- Boss_Enemy.size/3;
+    x = clamp(x, Boss_Enemy_MINX, maxx);
+    y = clamp(y, Boss_Enemy_MINY, maxy);
     if (y <= Boss_Enemy_MINY){
       GAME_STATE.Boss_Enemyup = true;
     }
-    else if(y >= Boss_Enemy_MAXY){
+    else if(y >= maxy){
       GAME_STATE.Boss_Enemyup = false;
     }
     setPosition(Boss_Enemy.$element, x, y);
@@ -625,7 +626,7 @@ function init() {
   updategauge();
   ON_PLAY = true;
   ON_PAUSE = false;
-  document.querySelector(".gui").style.display = "none";
+  
   document.querySelector("#ingame").style.display = "inherit";
   const $container = document.querySelector(".game");
   setInterval(enemymove, Boss_Enemy_MOVEDELAY);
@@ -645,8 +646,8 @@ function init() {
 }
 
 function playerHasWon() {
-  return 0;
-// return GAME_STATE.enemies.length === 0;
+  return GAME_STATE.score >= 50000;
+  // return 1;
 }
 
 
@@ -679,7 +680,7 @@ function update(e) {
   }
 
   if (GAME_STATE.gameOver) {
-    document.querySelector(".game-over").style.display = "block";
+    gameover();
     return;
   }
 
@@ -702,7 +703,9 @@ function update(e) {
 }
 
 
-
+function gameover(){
+  document.querySelector(".game-over").style.display = "block";
+}
 
 
 
@@ -720,9 +723,9 @@ function onKeyDown(e) {
       GAME_STATE.upPressed = true;
     } else if (e.keyCode === KEY_CODE_DOWN) {
       GAME_STATE.downPressed = true;
-    } else if (e.keyCode === KEY_CODE_CTRL){
+    } else if (e.keyCode === KEY_CODE_ulti){
       GAME_STATE.ctrlPressed = true;
-    } else if (e.keyCode === KEY_CODE_shift){
+    } else if (e.keyCode === KEY_CODE_SP_skill){
       GAME_STATE.shiftPressd = true;
     } else if (e.keyCode === KEY_CODE_Z){
       SpecialSkill(0)
@@ -732,9 +735,21 @@ function onKeyDown(e) {
       SpecialSkill(2)
     }
   } 
+  else{
+      if (e.keyCode === KEY_CODE_LEFT) {
+      slideIMG(-1);
+    } else if (e.keyCode === KEY_CODE_RIGHT) {
+      if(ON_STORY){
+        nextstory();
+      }
+      slideIMG(1);
+    } else if (e.keyCode === KEY_CODE_ENTER) {
+      story();
+    }
+  }
   if (e.keyCode === KEY_CODE_P) {
     resume();
-  } else if(e.keyCode === KEY_CODE_R){
+  } else if(e.keyCode === KEY_CODE_R || (GAME_STATE.gameOver && e.keyCode === KEY_CODE_ENTER)){
     window.location.reload()
   }
 }
@@ -750,9 +765,9 @@ function onKeyUp(e) {
     GAME_STATE.upPressed = false;
   } else if (e.keyCode === KEY_CODE_DOWN) {
     GAME_STATE.downPressed = false;
-  } else if (e.keyCode === KEY_CODE_CTRL){
+  } else if (e.keyCode === KEY_CODE_ulti){
     GAME_STATE.ctrlPressed = false;
-  } else if (e.keyCode === KEY_CODE_shift){
+  } else if (e.keyCode === KEY_CODE_SP_skill){
     GAME_STATE.shiftPressd = false;
   }
 }
@@ -772,4 +787,27 @@ function CslideIMG(n){
   document.getElementById("playerchoose").src = `img/player/${PLAYER_CHAR}.gif`;
 }
 
+var page = 1;
+function story(){
+  ON_STORY = true;
+  document.querySelector(".gui").style.display = "none";
+  document.querySelector(".congratulations").style.display = "none";
+  m_story = document.querySelector(".story");
+  m_story.style.display = "block";
+  // init();
+}
+function nextstory(){
+  page += 1;
+  m_story = document.querySelector(".story");
+  m_story.style.background = `url(img/story/first/${page}.jpg)`;
+  if (page > 3 && !ON_PLAY){
+    ON_STORY = false;
+    m_story.style.display = "none";
+    init();
+  }
+  if(page > 6){
+    m_story.style.display = "none";
+    gameover();
+  }
+}
 window.addEventListener("keydown", onKeyDown);

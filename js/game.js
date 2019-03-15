@@ -31,7 +31,7 @@ const MAX_STACK = 20;
 var PLAYER_CHAR = 1;
 const num_skill = 2;
 
-const MAX_skill_spaw_delay = 10;
+const MAX_skill_spaw_delay = 40;
 
 const PLAYER_MAX_SPEED = 600.0;
 const METEO_SPEED = 200.0;
@@ -55,6 +55,7 @@ var Boss_Enemy_Damage = 1;
 var ON_PAUSE = true;
 var ON_PLAY = false;
 var ON_STORY = false;
+var ON_COUNTDOWN = false;
 
 const GAME_STATE = {
   player_stack: 0,
@@ -258,7 +259,7 @@ function createLaser($container, x, y) {
   const laser = {name: "laser", x, y, damage: 1,  $element };
   GAME_STATE.lasers.push(laser);
   const audio = new Audio("sound/lazer.mp3");
-  audio.volume = .3;
+  audio.volume = .15;
   audio.play();
   setPosition($element, x, y);
   enemymove();
@@ -386,6 +387,7 @@ function boom($container, x, y) {
   $container.appendChild(boom);
   setPosition(boom, x, y);
   const audio = new Audio("sound/Bomb.mp3");
+  audio.volume = .6;
   audio.play();
   setTimeout(function(){
     $container.removeChild(boom);
@@ -606,7 +608,7 @@ function spawnMETEO(dt, $container){
 function spawnSKILL(dt, $container){
   if (GAME_STATE.skill_spaw <= 0){
     createSkill($container);
-    GAME_STATE.skill_spaw = MAX_skill_spaw_delay + (Math.random() * 60);
+    GAME_STATE.skill_spaw = MAX_skill_spaw_delay + (Math.random() * 20);
   }
   else{
     GAME_STATE.skill_spaw -= dt;
@@ -718,7 +720,15 @@ function onKeyDown(e) {
     } else if (e.keyCode === KEY_CODE_RIGHT) {
       GAME_STATE.rightPressed = true;
     } else if (e.keyCode === KEY_CODE_SPACE) {
-      GAME_STATE.spacePressed = true;
+        if(playerHasWon()){
+          if(ON_STORY){
+            nextstory();
+          }else{
+            story();
+          }
+        }else{
+          GAME_STATE.spacePressed = true;
+        }
     } else if (e.keyCode === KEY_CODE_UP) {
       GAME_STATE.upPressed = true;
     } else if (e.keyCode === KEY_CODE_DOWN) {
@@ -739,17 +749,19 @@ function onKeyDown(e) {
       if (e.keyCode === KEY_CODE_LEFT) {
       slideIMG(-1);
     } else if (e.keyCode === KEY_CODE_RIGHT) {
-      if(ON_STORY){
-        nextstory();
-      }
       slideIMG(1);
-    } else if (e.keyCode === KEY_CODE_ENTER) {
-      story();
+    } else if (e.keyCode === KEY_CODE_SPACE) {
+        if(ON_STORY){
+          nextstory();
+        }
+        else if (!ON_COUNTDOWN){
+        story();
+        }
     }
   }
   if (e.keyCode === KEY_CODE_P) {
     resume();
-  } else if(e.keyCode === KEY_CODE_R || (GAME_STATE.gameOver && e.keyCode === KEY_CODE_ENTER)){
+  } else if(e.keyCode === KEY_CODE_R || (GAME_STATE.gameOver && e.keyCode === KEY_CODE_SPACE)){
     window.location.reload()
   }
 }
@@ -803,7 +815,16 @@ function nextstory(){
   if (page > 3 && !ON_PLAY){
     ON_STORY = false;
     m_story.style.display = "none";
-    init();
+    document.querySelector(".countdown").style.display = "block";
+    ON_COUNTDOWN = true;
+    const audio = new Audio("sound/321.mp3");
+    audio.volume = .3;
+    audio.play();
+    setTimeout(function(){
+      ON_COUNTDOWN = false;
+      document.querySelector(".countdown").style.display = "none";
+      init();
+    }, 2800);
   }
   if(page > 6){
     m_story.style.display = "none";

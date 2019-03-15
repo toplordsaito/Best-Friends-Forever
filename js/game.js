@@ -50,6 +50,11 @@ const Boss_Enemy_MAXX = GAME_WIDTH - 60;
 const Boss_Enemy_MINY = 70;
 const Boss_Enemy_MAXY = GAME_HEIGHT - 100;
 const Boss_Enemy_STYLE = 11;
+
+
+const STORY_START = 4;
+const STORY_END = 7;
+
 var GAME_HEAL = 1;
 var Boss_Enemy_Damage = 1;
 var ON_PAUSE = true;
@@ -825,8 +830,8 @@ function story(){
 function nextstory(){
   page += 1;
   m_story = document.querySelector(".story");
-  m_story.style.background = `url(img/story/first/${page}.jpg)`;
-  if (page > 3 && !ON_PLAY){
+  document.querySelector(".story_mini").src = `img/story/first/${page}.jpg`;
+  if (page > STORY_START && !ON_PLAY){
     ON_STORY = false;
     m_story.style.display = "none";
     document.querySelector(".countdown").style.display = "block";
@@ -840,7 +845,7 @@ function nextstory(){
       init();
     }, 2800);
   }
-  if(page > 6){
+  if(page > STORY_END){
     m_story.style.display = "none";
     gameover();
   }

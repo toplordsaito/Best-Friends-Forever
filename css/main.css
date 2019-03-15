@@ -275,10 +275,15 @@ footer {
   text-align: center;
   width: 100%;
   height: 100%;
-  background: url(../img/story/first/1.jpg);
+  /* background: url(../img/story/first/1.jpg); */
+  /* background-size: cover; */
   position: relative;
   overflow: hidden;
   transition: all 1s;
+}
+.story_mini{
+  width: 100%;
+  height: 100%;
 }
 .slider {
   -webkit-appearance: none;

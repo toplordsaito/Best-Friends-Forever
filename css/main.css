@@ -2,6 +2,7 @@
     Thai&Eng font: font-family: 'Sriracha', cursive;, font-family: 'Kanit', sans-serif;
     Number font:  font-family: 'Hanalei Fill', cursive;
 */
+@import url('https://fonts.googleapis.com/css?family=Acme|Lilita+One|Sriracha');
 .homePage {
   opacity: 0;
 }
@@ -9,7 +10,8 @@
 
 
 h1, h2 {
-  font-family: 'Kanit', sans-serif;
+  /* font-family: 'Kanit', sans-serif; */
+  text-shadow: 4px 4px 10px black;
 }
 
 h1 {
@@ -18,18 +20,22 @@ h1 {
 
 h2 {
   font-size: 16px;
+  font-family: 'Sriracha', cursive;
 }
 
 html,
 body {
   height: 100%;
   overflow: hidden;
+  
 }
 
 body {
   margin: 0;
-  font: 16px sans-serif;
+  /* font: 16px sans-serif; */
+  font-family: 'Acme', sans-serif;
   background-color: rgb(255, 255, 255);
+  
 }
 .wrap {
   display: flex;
@@ -336,7 +342,10 @@ button{
 .btn:hover{
   color: red;
   font-size: 32px;
+  text-shadow: 4px 4px 10px red;
+
 }
+
 @keyframes pop-in {
   0% {
     opacity: 0;

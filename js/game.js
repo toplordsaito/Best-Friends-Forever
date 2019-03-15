@@ -194,8 +194,8 @@ function createUltimate($container, x, y, b_size) {
   $element.src = "img/bullet.gif";
   $element.className = "ultimate";
   if (b_size){
-    $element.style.width = "300px";
-    $element.style.height = "300px";
+    $element.style.width = "600px";
+    $element.style.height = "600px";
   }
   $container.appendChild($element);
   const ultimate = { name: "ult", damage: 1, x , y, $element };
@@ -584,7 +584,7 @@ function updateslot(){
 
 function SpecialSkill(slot){
   const audio = new Audio("sound/PW_UP.mp3");
-  audio.volume = 1 * SOUND_EFFECT;
+  audio.volume =   1* SOUND_EFFECT;
   audio.play();
   skill_code = GAME_STATE.skillslot[slot]
   if (skill_code === 1){
@@ -711,6 +711,12 @@ function update(e) {
 
 
 function gameover(){
+    SOUND_BGM = 0;
+    updateBGM();
+    const audio = new Audio("sound/gameover.mp3");
+    audio.volume = 1 * SOUND_EFFECT;
+    audio.loop = true;
+    audio.play();
   document.querySelector(".game-over").style.display = "block";
 }
 
@@ -807,6 +813,7 @@ function CslideIMG(n){
 
 var page = 1;
 function story(){
+  document.querySelector("audio").play();
   ON_STORY = true;
   document.querySelector(".gui").style.display = "none";
   document.querySelector(".congratulations").style.display = "none";
@@ -844,11 +851,14 @@ document.querySelector(".story").addEventListener("click", function(){
   });
 
 
+function updateBGM(){
+  document.querySelector("audio").volume = SOUND_BGM;
+}
 
 function updatesound(type,val){
   if(type == 'bgm'){
     SOUND_BGM = val/100;
-    document.querySelector("audio").volume = SOUND_BGM;
+    updateBGM();
   }else{
     SOUND_EFFECT = val/100;
   }
@@ -860,4 +870,3 @@ function updatesound(type,val){
   // audio.volume = .3;
   // audio.play();
   // document.querySelector("audio").volume = 1;
-

@@ -47,6 +47,7 @@ body {
   border-style: solid;
   height: 30px;
   width: 30px;
+  border-width: 2px;
   border-radius: 20px;
   font-family: 'Kanit', sans-serif;
   font-size: 12px;
@@ -58,7 +59,8 @@ body {
 }
 .slot p{
   position: absolute;
-  top: 0px;
+  top: 23px;
+  transform: translate(12px, 0px);
 }
 
 .head {
@@ -130,13 +132,19 @@ footer {
   background: url(../img/background-blue.png);
   position: relative;
   overflow: hidden;
-
-
 }
-#stack_bar{
-  font-size: 40px;
-  right: 300px;
-  position: absolute;
+.countdown {
+  display: none;
+  border-style: solid;
+  border-width: 0px;
+  color: rgb(255, 208, 0);
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  background: url(../img/321.gif);
+  background-size: 100% 100%;
+  position: relative;
+  overflow: hidden;
 }
 
 .homePage:first-child {
@@ -162,6 +170,7 @@ footer {
   opacity: 0;
   animation: move-up 2.5s;
   animation-fill-mode: forwards;
+  transform: translate(0px, 20px)
 }
 
 @keyframes pop-up-h1 {
@@ -228,11 +237,7 @@ footer {
   /* margin-left: -2.5px; */
   height: 300px;
 }
-.game .stack{
-  position: absolute;
-  /* margin-left: -2.5px; */
-  height: 300px;
-}
+
 .game .heal{
   position: absolute;
   margin-left: 15px; 
@@ -250,6 +255,22 @@ footer {
   position: absolute;
   /* margin-left: -2.5px; */
   height: 30px;
+}
+.story_but{
+  right: 0px;
+}
+.story {
+  display: none;
+  border-style: solid;
+  border-width: 0px;
+  color: rgb(255, 208, 0);
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  background: url(../img/story/first/1.jpg);
+  position: relative;
+  overflow: hidden;
+  transition: all 1s;
 }
 
 .congratulations {
@@ -279,8 +300,8 @@ footer {
 .game-over {
   display: none;
   position: absolute;
-  background: #6b1818;
-  color: white;
+  background: #ffe600;
+  color: rgb(0, 0, 0);
   padding: 20px 50px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   border-radius: 10px;
@@ -289,16 +310,10 @@ footer {
 }
 
 .btn {
-  border: 2px solid #00e0e0;
-  border-radius: 3px;
-  box-shadow: 0 2px rgba(0, 0, 0, 0.15);
-  background: linear-gradient(
-    to bottom,
-    #fff 0%,
-    #fff 49%,
-    #f5f5f5 50%,
-    #eee 100%
-  );
+  border: 3px dashed #000000;
+  border-radius: 20px;
+  box-shadow: 0px 5px #9e8100;
+  background: #ffc400;
   padding: 3px 40px;
   font: 16px sans-serif;
   font-family: 'Kanit', sans-serif;
@@ -336,11 +351,14 @@ footer {
   height: 100%;
 }
 #score_f{
-  position: absolute;
+  position: absolute; 
   background: #FFF;
   right: 32px;
   margin: 16px;
   font-family: 'Kanit', sans-serif;
+  width: 100px;
+  text-align: center;
+  border-radius: 10px;
 }
 .game #E_maxhealth{
   width: 450px;
@@ -358,9 +376,13 @@ footer {
   background: rgb(255, 115, 0);
   width: 100%;
   height: 100%;
+  border-radius: 3px;
 }
 .fullgauge{
   animation: .2s wipwap infinite;
+}
+.shake_gauge{
+  animation: .5s shake infinite;
 }
 #Max_gauge{
   width: 200px;
@@ -382,6 +404,21 @@ footer {
     background: #0f00e0
   }
 }
+
+@keyframes shake {
+  0% { transform: translate(1px, 1px) rotate(0deg); }
+  10% { transform: translate(-1px, -2px) rotate(-1deg); }
+  20% { transform: translate(-3px, 0px) rotate(1deg); }
+  30% { transform: translate(3px, 2px) rotate(0deg); }
+  40% { transform: translate(1px, -1px) rotate(1deg); }
+  50% { transform: translate(-1px, 2px) rotate(-1deg); }
+  60% { transform: translate(-3px, 1px) rotate(0deg); }
+  70% { transform: translate(3px, 1px) rotate(-1deg); }
+  80% { transform: translate(-1px, -1px) rotate(1deg); }
+  90% { transform: translate(1px, 2px) rotate(0deg); }
+  100% { transform: translate(1px, -2px) rotate(-1deg); }
+}
+
 #E_health{
   background: rgb(255, 187, 0);
   width: 100%;
@@ -389,13 +426,14 @@ footer {
   
 }
 .skill{
-  width: 100px;
-  height: 100px;
+  width: 40px;
+  height: 40px;
   position: absolute;
 }
 
 #pausebutton{
   margin: 8px;
+  margin-top: 12px;
   position: absolute;
   right: 0em;
   width: 32px;
@@ -409,10 +447,30 @@ footer {
   border-radius: 15px;
   animation: move-up 2s;
   animation-fill-mode: forwards;
+  position: relative;
+  bottom: 120px;
 }
 
 #itemslot {
   margin: 10px;
   left: 200px;
   color: #fff;
+}
+
+.progressBar {
+  width: 200px;
+  background-color: rgba(255, 255, 255, 0.733);
+  border-radius: 20px;
+  margin: 5px;
+  bottom: 0px;
+  left: 24px;
+  position: absolute;
+
+}
+
+.percenBar {
+  height: 5px;
+  background-color: rgb(0, 255, 136);
+  width: 50%;
+  border-radius: 20px;
 }

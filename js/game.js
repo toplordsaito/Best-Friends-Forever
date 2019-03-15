@@ -5,11 +5,12 @@ const KEY_CODE_UP = 38;
 const KEY_CODE_DOWN = 40;
 const KEY_CODE_P = 80;
 const KEY_CODE_R = 82;
-const KEY_CODE_CTRL = 17;
+const KEY_CODE_ulti = 17;
 const KEY_CODE_Z = 90;
 const KEY_CODE_X = 88;
 const KEY_CODE_C = 67;
-const KEY_CODE_shift = 16;
+const KEY_CODE_SP_skill = 16;
+const KEY_CODE_ENTER = 13;
 
 const GAME_WIDTH = 800;
 const GAME_HEIGHT = 600;
@@ -25,12 +26,12 @@ const PLAYER_MAXX = GAME_WIDTH - PLAYER_WIDTH - 200;
 const PLAYER_MINY = PLAYER_HEIGHT - 70;
 const PLAYER_MAXY = GAME_HEIGHT - PLAYER_HEIGHT;
 const PLAYER_STYLE = 13;
-const MAX_GAUGE = 5;
+const MAX_GAUGE = 10;
 const MAX_STACK = 20;
 var PLAYER_CHAR = 1;
 const num_skill = 2;
 
-const MAX_skill_spaw_delay = 10;
+const MAX_skill_spaw_delay = 40;
 
 const PLAYER_MAX_SPEED = 600.0;
 const METEO_SPEED = 200.0;
@@ -39,11 +40,7 @@ var LASER_COOLDOWN = 1;
 const START_BossX = GAME_WIDTH;
 const START_BossY = GAME_HEIGHT /2 ;
 
-const ENEMIES_PER_ROW = 4;
 const Boss_Enemy_HEALTH = 1;
-const Boss_Enemy_HORIZONTAL_PADDING = 80;
-const Boss_Enemy_VERTICAL_PADDING = 70;
-const Boss_Enemy_VERTICAL_SPACING = 80;
 const Boss_Enemy_COOLDOWN = 3;
 const Boss_Enemy_COOLDOWN_RANGE = 0.2;
 const Boss_Enemy_SPEED = 2;
@@ -51,16 +48,17 @@ const Boss_Enemy_MOVEDELAY = 500;
 const Boss_Enemy_MINX = 0;
 const Boss_Enemy_MAXX = GAME_WIDTH - 60;
 const Boss_Enemy_MINY = 70;
-const Boss_Enemy_MAXY = GAME_HEIGHT - 80;
+const Boss_Enemy_MAXY = GAME_HEIGHT - 100;
 const Boss_Enemy_STYLE = 11;
-var GAME_HEAL = 2;
+var GAME_HEAL = 1;
 var Boss_Enemy_Damage = 1;
 var ON_PAUSE = true;
 var ON_PLAY = false;
-
+var ON_STORY = false;
+var ON_COUNTDOWN = false;
 
 const GAME_STATE = {
-  player_stack: 20,
+  player_stack: 0,
   skill_spaw: 10,
   MAX_MATEO_DELAY: 1.5,
   METEO_DELAY: 1.5,
@@ -90,7 +88,8 @@ const GAME_STATE = {
   Boss_EnemyY: 0,
   score: 0,
   cdMETEO: 10,
-  skillslot: [0, 0, 0]
+  skillslot: [0, 0, 0],
+  devil: false
 };
 
 function rectsIntersect(r1, r2) {
@@ -150,14 +149,22 @@ function updatePlayer(dt, $container) {
   GAME_STATE.playerY = clamp(GAME_STATE.playerY, PLAYER_MINY, PLAYER_MAXY,);
 
   if (GAME_STATE.spacePressed && GAME_STATE.playerCooldown <= 0) {
-    createLaser($container, GAME_STATE.playerX, GAME_STATE.playerY);
+    if (GAME_STATE.devil){
+      createUltimate($container, GAME_STATE.playerX - 50, GAME_STATE.playerY - 100);
+    }
+    else {
+      createLaser($container, GAME_STATE.playerX, GAME_STATE.playerY);
+    }
     GAME_STATE.playerCooldown = LASER_COOLDOWN;
   }
   if (GAME_STATE.ctrlPressed && GAME_STATE.gauge_player == MAX_GAUGE) {
-    createUltimate($container, GAME_STATE.playerX - 50, GAME_STATE.playerY - 100);
+    //createUltimate($container, GAME_STATE.playerX - 50, GAME_STATE.playerY - 100);
+    devil();
   }
   if (GAME_STATE.shiftPressd && GAME_STATE.player_stack == MAX_STACK) {
-    createStack($container, GAME_STATE.playerX - 50, GAME_STATE.playerY - 100);
+    GAME_STATE.player_stack = 0;
+    updatestack();
+    createUltimate($container, GAME_STATE.playerX - 50, GAME_STATE.playerY - 100, GAME_STATE.devil);
   }
   if (GAME_STATE.playerCooldown > 0) {
     GAME_STATE.playerCooldown -= dt;
@@ -167,12 +174,27 @@ function updatePlayer(dt, $container) {
   setPosition(player, GAME_STATE.playerX, GAME_STATE.playerY);
 }
 
-function createUltimate($container, x, y) {
+function devil(){
   GAME_STATE.gauge_player = 0;
   updategauge();
+  player = document.querySelector(".player");
+  player.src = `img/player/devil.gif`;
+  GAME_STATE.devil = true;
+  setTimeout(function(){
+    player.src = `img/player/${PLAYER_CHAR}.gif`;
+    GAME_STATE.devil = false;
+  }, 5000);
+}
+
+
+function createUltimate($container, x, y, b_size) {
   const $element = document.createElement("img"); 
   $element.src = "img/bullet.gif";
   $element.className = "ultimate";
+  if (b_size){
+    $element.style.width = "600px";
+    $element.style.height = "600px";
+  }
   $container.appendChild($element);
   const ultimate = { name: "ult", damage: 1, x , y, $element };
   GAME_STATE.lasers.push(ultimate);
@@ -186,11 +208,14 @@ function createUltimate($container, x, y) {
 
 function updategauge(){
   mygauge = document.querySelector("#gauge");
-  if(GAME_STATE.gauge_player == 5){
+  myfull_gauge = document.querySelector("#Max_gauge");
+  if(GAME_STATE.gauge_player == MAX_GAUGE){
     mygauge.classList.add("fullgauge");
+    myfull_gauge.classList.add("shake_gauge");
   }
   else{
     mygauge.classList.remove("fullgauge");
+    myfull_gauge.classList.remove("shake_gauge");
   }
   mygauge.style.width = `${GAME_STATE.gauge_player/MAX_GAUGE*100}%`;
 }
@@ -214,8 +239,14 @@ function createStack($container, x, y) {
 
 
 function updatestack(){
-  mystack = document.querySelector("#stack_bar");
-  mystack.innerText = `${GAME_STATE.player_stack}`;
+  mystack = document.querySelector(".percenBar");
+  if(GAME_STATE.player_stack == MAX_STACK){
+    mystack.classList.add("shake_gauge");
+  }
+  else{
+    mystack.classList.remove("shake_gauge");
+  }
+  mystack.style.width = `${GAME_STATE.player_stack*100/20}%`;
 }
 
 
@@ -228,7 +259,7 @@ function createLaser($container, x, y) {
   const laser = {name: "laser", x, y, damage: 1,  $element };
   GAME_STATE.lasers.push(laser);
   const audio = new Audio("sound/lazer.mp3");
-  audio.volume = .3;
+  audio.volume = .15;
   audio.play();
   setPosition($element, x, y);
   enemymove();
@@ -321,7 +352,7 @@ function damaged($container, x, y, num) {
   GAME_STATE.player_health -= num;
   GAME_STATE.gauge_player = Math.min(MAX_GAUGE, GAME_STATE.gauge_player + num);
   updategauge();
-  damaged.innerHTML = `${num}`;
+  damaged.innerHTML = `-${num}`;
   damaged.className = "damaged";
   $container.appendChild(damaged);
   setPosition(damaged, x, y);
@@ -337,7 +368,7 @@ function updatehealth(){
 function heal($container, x, y, num) {
   const heal = document.createElement("div");
   GAME_STATE.player_health = Math.min(10, GAME_STATE.player_health + num);
-  heal.innerHTML = `${num}`;
+  heal.innerHTML = `+${num}`;
   heal.className = "heal";
   $container.appendChild(heal);
   setPosition(heal, x, y);
@@ -356,6 +387,7 @@ function boom($container, x, y) {
   $container.appendChild(boom);
   setPosition(boom, x, y);
   const audio = new Audio("sound/Bomb.mp3");
+  audio.volume = .6;
   audio.play();
   setTimeout(function(){
     $container.removeChild(boom);
@@ -383,19 +415,21 @@ function createBoss_Enemy($container) {
     document.querySelector("#E_health").style.width = `100%`;
   const $element = document.createElement("img");
   $element.src = `img/enemy/${parseInt(Math.random() * Boss_Enemy_STYLE) + 1}.gif`;
-  $element.style.width = `${parseInt(Math.random() * 3) * 40 + 40}px`;
+  var size = parseInt(Math.random() * 3) * 40 + 80;
+  $element.style.width = `${size}px`;
   $element.className = "Boss_Enemy";
   $container.appendChild($element);
   const Boss_Enemy = {
     maxcooldown: (parseInt(Math.random() * Boss_Enemy_COOLDOWN) + 1) * Boss_Enemy_COOLDOWN_RANGE + 1,
     health: GAME_STATE.Boss_Enemyhealth,
-    x,
+    x: x-100,
     y,
+    size,
     cooldown: Boss_Enemy_COOLDOWN,
     $element
   };
   GAME_STATE.enemies.push(Boss_Enemy);
-  setPosition($element, x, y);
+  setPosition($element, Boss_Enemy.x, Boss_Enemy.y);
 }
 
 
@@ -412,12 +446,14 @@ function updateEnemies(dt, $container) {
     const Boss_Enemy = enemies[i];
     var x = Boss_Enemy.x + GAME_STATE.Boss_EnemyX;
     var y = Boss_Enemy.y + GAME_STATE.Boss_EnemyY;
-    x = clamp(x, Boss_Enemy_MINX, Boss_Enemy_MAXX);
-    y = clamp(y, Boss_Enemy_MINY, Boss_Enemy_MAXY);
+    var maxy = Boss_Enemy_MAXY- Boss_Enemy.size/2,
+        maxx = Boss_Enemy_MAXX- Boss_Enemy.size/3;
+    x = clamp(x, Boss_Enemy_MINX, maxx);
+    y = clamp(y, Boss_Enemy_MINY, maxy);
     if (y <= Boss_Enemy_MINY){
       GAME_STATE.Boss_Enemyup = true;
     }
-    else if(y >= Boss_Enemy_MAXY){
+    else if(y >= maxy){
       GAME_STATE.Boss_Enemyup = false;
     }
     setPosition(Boss_Enemy.$element, x, y);
@@ -572,7 +608,7 @@ function spawnMETEO(dt, $container){
 function spawnSKILL(dt, $container){
   if (GAME_STATE.skill_spaw <= 0){
     createSkill($container);
-    GAME_STATE.skill_spaw = MAX_skill_spaw_delay + (Math.random() * 60);
+    GAME_STATE.skill_spaw = MAX_skill_spaw_delay + (Math.random() * 20);
   }
   else{
     GAME_STATE.skill_spaw -= dt;
@@ -592,7 +628,7 @@ function init() {
   updategauge();
   ON_PLAY = true;
   ON_PAUSE = false;
-  document.querySelector(".gui").style.display = "none";
+  
   document.querySelector("#ingame").style.display = "inherit";
   const $container = document.querySelector(".game");
   setInterval(enemymove, Boss_Enemy_MOVEDELAY);
@@ -612,8 +648,8 @@ function init() {
 }
 
 function playerHasWon() {
-  return 0;
-// return GAME_STATE.enemies.length === 0;
+  return GAME_STATE.score >= 50000;
+  // return 1;
 }
 
 
@@ -646,7 +682,7 @@ function update(e) {
   }
 
   if (GAME_STATE.gameOver) {
-    document.querySelector(".game-over").style.display = "block";
+    gameover();
     return;
   }
 
@@ -669,7 +705,9 @@ function update(e) {
 }
 
 
-
+function gameover(){
+  document.querySelector(".game-over").style.display = "block";
+}
 
 
 
@@ -682,14 +720,22 @@ function onKeyDown(e) {
     } else if (e.keyCode === KEY_CODE_RIGHT) {
       GAME_STATE.rightPressed = true;
     } else if (e.keyCode === KEY_CODE_SPACE) {
-      GAME_STATE.spacePressed = true;
+        if(playerHasWon()){
+          if(ON_STORY){
+            nextstory();
+          }else{
+            story();
+          }
+        }else{
+          GAME_STATE.spacePressed = true;
+        }
     } else if (e.keyCode === KEY_CODE_UP) {
       GAME_STATE.upPressed = true;
     } else if (e.keyCode === KEY_CODE_DOWN) {
       GAME_STATE.downPressed = true;
-    } else if (e.keyCode === KEY_CODE_CTRL){
+    } else if (e.keyCode === KEY_CODE_ulti){
       GAME_STATE.ctrlPressed = true;
-    } else if (e.keyCode === KEY_CODE_shift){
+    } else if (e.keyCode === KEY_CODE_SP_skill){
       GAME_STATE.shiftPressd = true;
     } else if (e.keyCode === KEY_CODE_Z){
       SpecialSkill(0)
@@ -699,9 +745,23 @@ function onKeyDown(e) {
       SpecialSkill(2)
     }
   } 
+  else{
+      if (e.keyCode === KEY_CODE_LEFT) {
+      slideIMG(-1);
+    } else if (e.keyCode === KEY_CODE_RIGHT) {
+      slideIMG(1);
+    } else if (e.keyCode === KEY_CODE_SPACE) {
+        if(ON_STORY){
+          nextstory();
+        }
+        else if (!ON_COUNTDOWN){
+        story();
+        }
+    }
+  }
   if (e.keyCode === KEY_CODE_P) {
     resume();
-  } else if(e.keyCode === KEY_CODE_R){
+  } else if(e.keyCode === KEY_CODE_R || (GAME_STATE.gameOver && e.keyCode === KEY_CODE_SPACE)){
     window.location.reload()
   }
 }
@@ -717,9 +777,9 @@ function onKeyUp(e) {
     GAME_STATE.upPressed = false;
   } else if (e.keyCode === KEY_CODE_DOWN) {
     GAME_STATE.downPressed = false;
-  } else if (e.keyCode === KEY_CODE_CTRL){
+  } else if (e.keyCode === KEY_CODE_ulti){
     GAME_STATE.ctrlPressed = false;
-  } else if (e.keyCode === KEY_CODE_shift){
+  } else if (e.keyCode === KEY_CODE_SP_skill){
     GAME_STATE.shiftPressd = false;
   }
 }
@@ -739,4 +799,40 @@ function CslideIMG(n){
   document.getElementById("playerchoose").src = `img/player/${PLAYER_CHAR}.gif`;
 }
 
+var page = 1;
+function story(){
+  ON_STORY = true;
+  document.querySelector(".gui").style.display = "none";
+  document.querySelector(".congratulations").style.display = "none";
+  m_story = document.querySelector(".story");
+  m_story.style.display = "block";
+  // init();
+}
+function nextstory(){
+  page += 1;
+  m_story = document.querySelector(".story");
+  m_story.style.background = `url(img/story/first/${page}.jpg)`;
+  if (page > 3 && !ON_PLAY){
+    ON_STORY = false;
+    m_story.style.display = "none";
+    document.querySelector(".countdown").style.display = "block";
+    ON_COUNTDOWN = true;
+    const audio = new Audio("sound/321.mp3");
+    audio.volume = .3;
+    audio.play();
+    setTimeout(function(){
+      ON_COUNTDOWN = false;
+      document.querySelector(".countdown").style.display = "none";
+      init();
+    }, 2800);
+  }
+  if(page > 6){
+    m_story.style.display = "none";
+    gameover();
+  }
+}
 window.addEventListener("keydown", onKeyDown);
+
+document.querySelector(".story").addEventListener("click", function(){
+  nextstory(); 
+  });

@@ -11,10 +11,15 @@
 </head>
 
 <body>
+   
   <div class="wrap">
     <div class="head">Best Friend Forever!</div>
     <div class="game-wrapper">
       <div class="game">
+          <div class="story">
+              <!-- <button class="story_but" onclick="nextstory()">&#10095;</button> -->
+          </div>
+          <div class="countdown"></div>
           <div class="gui">
               <h1 class="homePage">Best Friend Forever!</h1>
               <h2 class="homePage">เป็นได้แค่......เพื่อน</h2>
@@ -22,9 +27,8 @@
               <button class="slidebut homePage" onclick="slideIMG(-1)">&#10094;</button>
               <img src="img/player/1.gif" id="playerchoose"/>
               <button class="slidebut homePage" onclick="slideIMG(+1)">&#10095;</button><br>
-              <button class="btn" id="bnt-on-homepage" onclick="init()">START</button>
+              <button class="btn" id="bnt-on-homepage" onclick="story()">START</button>
             </div>
-            <div id="stack_bar">0</div>
             <div id="itemslot">
               <div class="slot">
                 <img class="slot1"/>
@@ -44,14 +48,19 @@
         <div id="maxhealth"> <div id="P_health"> </div></div>
         <div id="score_f"> Score : 0</div>
         <img src="img/pause.gif" id="pausebutton"/>
-        <div id="Max_gauge"> <div id="gauge"> </div></div>
+        <div id="Max_gauge"> 
+          <div id="gauge"></div>
+        </div>
+        <div class="progressBar">
+            <div class="percenBar"></div>
+        </div>
         <div id="E_maxhealth"> <div id="E_health"> </div></div>
           </div>
         </div>
       <div class="congratulations">
         <h1>Congratulations!</h1>
         <h2>You won the game</h2>
-        <button class="btn" onclick="window.location.reload()">Restart</button>
+        <button class="btn" onclick="story()">เย้ๆๆ</button>
       </div>
       <div class="pauseui">
         <h1>Pause!</h1>
@@ -60,11 +69,14 @@
       </div>
       <div class="game-over">
         <h1>GAME OVER</h1>
-        <h2>นายมันขี้แพ้.....</h2>
-        <button class="btn" onclick="window.location.reload()">Restart</button>
+        <h2>เป็นเพื่อนกันแหละดีแล้ว</h2>
+        <button class="btn" onclick="window.location.reload()">เพื่อนพ่อง</button>
       </div>
     </div>
     <footer>I love you but as friend</footer>
+  </div>
+  <div>
+      <embed src="sound/bgm.mp3" loop>
   </div>
   <script src="js/game.js"></script>
 </body>

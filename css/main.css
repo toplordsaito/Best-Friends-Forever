@@ -93,7 +93,10 @@ footer {
   display: flex;
   justify-content: center;
   align-items: center;
+  /*
   background-image: url("../img/Background/squre.gif");
+  */
+  background-image: url(https://media.giphy.com/media/7n5ZuMZgVZJXq/giphy.gif);
   background-size: 100%
 }
 .game {
@@ -440,6 +443,8 @@ footer {
   border-radius: 15px;
   animation: move-up 2s;
   animation-fill-mode: forwards;
+  position: relative;
+  bottom: 120px;
 }
 
 #itemslot {

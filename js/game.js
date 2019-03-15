@@ -665,6 +665,7 @@ function resume(){
       ON_PAUSE = true;
      }
      else{
+      GAME_STATE.lastTime = Date.now();
       document.querySelector(".pauseui").style.display = "none";
       window.requestAnimationFrame(update);
       ON_PAUSE = false;
@@ -678,13 +679,13 @@ function resume(){
 
 
 function update(e) {
-  const currentTime = Date.now();
-  const dt = (currentTime - GAME_STATE.lastTime) / 1000.0;
-  document.getElementById("score_f").innerHTML = `Score : ${GAME_STATE.score}`;
   if (ON_PAUSE){
     document.querySelector(".pauseui").style.display = "block";
     return;
   }
+  const currentTime = Date.now();
+  const dt = (currentTime - GAME_STATE.lastTime) / 1000.0;
+  document.getElementById("score_f").innerHTML = `Score : ${GAME_STATE.score}`;
 
   if (GAME_STATE.gameOver) {
     gameover();

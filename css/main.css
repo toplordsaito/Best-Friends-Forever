@@ -6,6 +6,8 @@
   opacity: 0;
 }
 
+
+
 h1, h2 {
   font-family: 'Kanit', sans-serif;
 }
@@ -223,7 +225,7 @@ footer {
 .game .laser {
   position: absolute;
   /* margin-left: -2.5px; */
-  height: 50px;
+  height: 30px;
 }
 .game .damaged{
   position: absolute;
@@ -235,7 +237,7 @@ footer {
 .game .ultimate{
   position: absolute;
   /* margin-left: -2.5px; */
-  height: 300px;
+  height: 200px;
 }
 
 .game .heal{
@@ -270,6 +272,19 @@ footer {
   background: url(../img/story/first/1.jpg);
   position: relative;
   overflow: hidden;
+  transition: all 1s;
+}
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 25px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+button{
   transition: all 1s;
 }
 
@@ -312,13 +327,16 @@ footer {
 .btn {
   border: 3px dashed #000000;
   border-radius: 20px;
-  box-shadow: 0px 5px #9e8100;
+  box-shadow: 4px 4px 5px #9e8100;
   background: #ffc400;
   padding: 3px 40px;
   font: 16px sans-serif;
   font-family: 'Kanit', sans-serif;
 }
-
+.btn:hover{
+  color: red;
+  font-size: 32px;
+}
 @keyframes pop-in {
   0% {
     opacity: 0;

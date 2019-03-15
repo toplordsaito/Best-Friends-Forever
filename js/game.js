@@ -199,8 +199,7 @@ function createUltimate($container, x, y, b_size) {
   $element.src = "img/bullet.gif";
   $element.className = "ultimate";
   if (b_size){
-    $element.style.width = "300px";
-    $element.style.height = "300px";
+    $element.style.width = "600px";
   }
   $container.appendChild($element);
   const ultimate = { name: "ult", damage: 1, x , y, $element };

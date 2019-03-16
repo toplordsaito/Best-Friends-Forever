@@ -508,7 +508,18 @@ button{
 
 .meteo{
   position: absolute;
+  /* animation: rotate 1s infinite; */
+  /* transition: all 1s; */
 }
+
+/* @keyframes rotate{
+  0%{
+    transform: rotate(0deg);
+  }
+  100%{
+    transform: rotate(360deg);
+  }
+} */
 
 .slidebut {
   animation: move-up 2s;

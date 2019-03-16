@@ -196,7 +196,7 @@ function devil(){
 
 function createUltimate($container, x, y, b_size) {
   const $element = document.createElement("img"); 
-  $element.src = "img/bullet.gif";
+  $element.src = "img/unti1.gif";
   $element.className = "ultimate";
   if (b_size){
     $element.style.width = "600px";
@@ -261,7 +261,7 @@ function updatestack(){
 
 function createLaser($container, x, y) {
   const $element = document.createElement("img"); 
-  $element.src = "img/bullet.gif";
+  $element.src = "img/heart.gif";
   $element.className = "laser";
   $container.appendChild($element);
   const laser = {name: "laser", x, y, damage: 1,  $element };
@@ -290,6 +290,7 @@ function updateLasers(dt, $container) {
 }
 
 function destroyLaser($container, laser) {
+  if (laser.isDead){return;};
   $container.removeChild(laser.$element);
   laser.isDead = true;
 }
@@ -554,8 +555,9 @@ function destroyBoss_Enemylaser($container, laser) {
     var y = Math.random() * GAME_HEIGHT + meteosize * 10;
     y = clamp(y, GAME_TOP, GAME_HEIGHT - 10 * meteosize - 70)
     const $element = document.createElement("img");
-    $element.style.width = `${meteosize * 20}px`
-    $element.src = "img/meteorite.gif";
+    $element.style.width = `${meteosize * 20}px`;
+    // $element.style.height = `${meteosize * 20}px`;
+    $element.src = `img/E_power/${parseInt(Math.random() * 4) + 1}.gif`;
     $element.className = "meteo";
     $container.appendChild($element);
     const mymeteo = {name: "meteo" , x, y, $element, hp: meteosize};
@@ -818,6 +820,7 @@ function story(){
   document.querySelector("audio").play();
   ON_STORY = true;
   document.querySelector(".gui").style.display = "none";
+  document.querySelector("#ingame").style.display = "none";
   document.querySelector(".congratulations").style.display = "none";
   m_story = document.querySelector(".story");
   m_story.style.display = "block";
@@ -836,12 +839,14 @@ function nextstory(){
     audio.volume = .2;
     audio.play();
     setTimeout(function(){
+      document.querySelector("#ingame").style.display = "block";
       ON_COUNTDOWN = false;
       document.querySelector(".countdown").style.display = "none";
       init();
     }, 2800);
   }
   if(page > STORY_END){
+    document.querySelector("#ingame").style.display = "block";
     m_story.style.display = "none";
     gameover();
   }

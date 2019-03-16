@@ -50,12 +50,19 @@ const Boss_Enemy_MAXX = GAME_WIDTH - 60;
 const Boss_Enemy_MINY = 70;
 const Boss_Enemy_MAXY = GAME_HEIGHT - 100;
 const Boss_Enemy_STYLE = 11;
+
+
+const STORY_START = 4;
+const STORY_END = 7;
+
 var GAME_HEAL = 1;
 var Boss_Enemy_Damage = 1;
 var ON_PAUSE = true;
 var ON_PLAY = false;
 var ON_STORY = false;
 var ON_COUNTDOWN = false;
+var SOUND_BGM = .5;
+var SOUND_EFFECT = .5;
 
 const GAME_STATE = {
   player_stack: 0,
@@ -193,13 +200,12 @@ function createUltimate($container, x, y, b_size) {
   $element.className = "ultimate";
   if (b_size){
     $element.style.width = "600px";
-    $element.style.height = "600px";
   }
   $container.appendChild($element);
   const ultimate = { name: "ult", damage: 1, x , y, $element };
   GAME_STATE.lasers.push(ultimate);
   // const audio = new Audio("sound/lazer.mp3");
-  // audio.volume = .3;
+  // audio.volume = .3 * SOUND_EFFECT;
   // audio.play();
   setPosition($element, x, y);
 }
@@ -232,7 +238,7 @@ function createStack($container, x, y) {
   const stack = { name: "stack", damage: 1,x , y, $element };
   GAME_STATE.lasers.push(stack);
   // const audio = new Audio("sound/lazer.mp3");
-  // audio.volume = .3;
+  // audio.volume = .3 * SOUND_EFFECT;
   // audio.play();
   setPosition($element, x, y);
 }
@@ -261,7 +267,7 @@ function createLaser($container, x, y) {
   const laser = {name: "laser", x, y, damage: 1,  $element };
   GAME_STATE.lasers.push(laser);
   const audio = new Audio("sound/lazer.mp3");
-  audio.volume = .15;
+  audio.volume = .3 * SOUND_EFFECT;
   audio.play();
   setPosition($element, x, y);
   enemymove();
@@ -389,7 +395,7 @@ function boom($container, x, y) {
   $container.appendChild(boom);
   setPosition(boom, x, y);
   const audio = new Audio("sound/Bomb.mp3");
-  audio.volume = .6;
+  audio.volume = .6 * SOUND_EFFECT;
   audio.play();
   setTimeout(function(){
     $container.removeChild(boom);
@@ -583,6 +589,9 @@ function updateslot(){
 
 
 function SpecialSkill(slot){
+  const audio = new Audio("sound/PW_UP.mp3");
+  audio.volume =   1* SOUND_EFFECT;
+  audio.play();
   skill_code = GAME_STATE.skillslot[slot]
   if (skill_code === 1){
     GAME_STATE.player_health = PLAYER_HEALTH;
@@ -655,6 +664,7 @@ function resume(){
       ON_PAUSE = true;
      }
      else{
+      GAME_STATE.lastTime = Date.now();
       document.querySelector(".pauseui").style.display = "none";
       window.requestAnimationFrame(update);
       ON_PAUSE = false;
@@ -668,13 +678,13 @@ function resume(){
 
 
 function update(e) {
-  const currentTime = Date.now();
-  const dt = (currentTime - GAME_STATE.lastTime) / 1000.0;
-  document.getElementById("score_f").innerHTML = `Score : ${GAME_STATE.score}`;
   if (ON_PAUSE){
     document.querySelector(".pauseui").style.display = "block";
     return;
   }
+  const currentTime = Date.now();
+  const dt = (currentTime - GAME_STATE.lastTime) / 1000.0;
+  document.getElementById("score_f").innerHTML = `Score : ${GAME_STATE.score}`;
 
   if (GAME_STATE.gameOver) {
     gameover();
@@ -701,6 +711,12 @@ function update(e) {
 
 
 function gameover(){
+    SOUND_BGM = 0;
+    updateBGM();
+    const audio = new Audio("sound/gameover.mp3");
+    audio.volume = 1 * SOUND_EFFECT;
+    audio.loop = true;
+    audio.play();
   document.querySelector(".game-over").style.display = "block";
 }
 
@@ -756,7 +772,8 @@ function onKeyDown(e) {
   }
   if (e.keyCode === KEY_CODE_P) {
     resume();
-  } else if(e.keyCode === KEY_CODE_R || (GAME_STATE.gameOver && e.keyCode === KEY_CODE_SPACE)){
+  } else if(e.keyCode === KEY_CODE_R){
+    // if(e.keyCode === KEY_CODE_R || (GAME_STATE.gameOver && e.keyCode === KEY_CODE_SPACE))
     window.location.reload()
   }
 }
@@ -796,6 +813,7 @@ function CslideIMG(n){
 
 var page = 1;
 function story(){
+  document.querySelector("audio").play();
   ON_STORY = true;
   document.querySelector(".gui").style.display = "none";
   document.querySelector(".congratulations").style.display = "none";
@@ -806,14 +824,14 @@ function story(){
 function nextstory(){
   page += 1;
   m_story = document.querySelector(".story");
-  m_story.style.background = `url(img/story/first/${page}.jpg)`;
-  if (page > 3 && !ON_PLAY){
+  document.querySelector(".story_mini").src = `img/story/first/${page}.jpg`;
+  if (page > STORY_START && !ON_PLAY){
     ON_STORY = false;
     m_story.style.display = "none";
     document.querySelector(".countdown").style.display = "block";
     ON_COUNTDOWN = true;
     const audio = new Audio("sound/321.mp3");
-    audio.volume = .3;
+    audio.volume = .2;
     audio.play();
     setTimeout(function(){
       ON_COUNTDOWN = false;
@@ -821,7 +839,7 @@ function nextstory(){
       init();
     }, 2800);
   }
-  if(page > 6){
+  if(page > STORY_END){
     m_story.style.display = "none";
     gameover();
   }
@@ -831,3 +849,24 @@ window.addEventListener("keydown", onKeyDown);
 document.querySelector(".story").addEventListener("click", function(){
   nextstory(); 
   });
+
+
+function updateBGM(){
+  document.querySelector("audio").volume = SOUND_BGM;
+}
+
+function updatesound(type,val){
+  if(type == 'bgm'){
+    SOUND_BGM = val/100;
+    updateBGM();
+  }else{
+    SOUND_EFFECT = val/100;
+  }
+}
+
+// var bgm = new Audio("sound/bgm.mp3");
+// bgm.play();
+// const audio = new Audio("sound/lazer.mp3");
+  // audio.volume = .3;
+  // audio.play();
+  // document.querySelector("audio").volume = 1;

@@ -2,12 +2,16 @@
     Thai&Eng font: font-family: 'Sriracha', cursive;, font-family: 'Kanit', sans-serif;
     Number font:  font-family: 'Hanalei Fill', cursive;
 */
+@import url('https://fonts.googleapis.com/css?family=Acme|Lilita+One|Sriracha');
 .homePage {
   opacity: 0;
 }
 
+
+
 h1, h2 {
-  font-family: 'Kanit', sans-serif;
+  /* font-family: 'Kanit', sans-serif; */
+  text-shadow: 4px 4px 10px black;
 }
 
 h1 {
@@ -16,18 +20,22 @@ h1 {
 
 h2 {
   font-size: 16px;
+  font-family: 'Sriracha', cursive;
 }
 
 html,
 body {
   height: 100%;
   overflow: hidden;
+  
 }
 
 body {
   margin: 0;
-  font: 16px sans-serif;
+  /* font: 16px sans-serif; */
+  font-family: 'Acme', sans-serif;
   background-color: rgb(255, 255, 255);
+  
 }
 .wrap {
   display: flex;
@@ -224,7 +232,7 @@ footer {
 .game .laser {
   position: absolute;
   /* margin-left: -2.5px; */
-  height: 50px;
+  height: 30px;
 }
 .game .damaged{
   position: absolute;
@@ -236,7 +244,7 @@ footer {
 .game .ultimate{
   position: absolute;
   /* margin-left: -2.5px; */
-  height: 300px;
+  height: 200px;
 }
 
 .game .heal{
@@ -268,9 +276,27 @@ footer {
   text-align: center;
   width: 100%;
   height: 100%;
-  background: url(../img/story/first/1.jpg);
+  /* background: url(../img/story/first/1.jpg); */
+  /* background-size: cover; */
   position: relative;
   overflow: hidden;
+  transition: all 1s;
+}
+.story_mini{
+  width: 100%;
+  height: 100%;
+}
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 25px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+button{
   transition: all 1s;
 }
 
@@ -313,11 +339,17 @@ footer {
 .btn {
   border: 3px dashed #000000;
   border-radius: 20px;
-  box-shadow: 0px 5px #9e8100;
+  box-shadow: 4px 4px 5px #9e8100;
   background: #ffc400;
   padding: 3px 40px;
   font: 16px sans-serif;
   font-family: 'Kanit', sans-serif;
+}
+.btn:hover{
+  color: red;
+  font-size: 32px;
+  text-shadow: 4px 4px 10px red;
+
 }
 
 @keyframes pop-in {

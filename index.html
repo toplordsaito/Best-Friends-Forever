@@ -17,6 +17,7 @@
     <div class="game-wrapper">
       <div class="game">
           <div class="story">
+            <img class="story_mini" src="img/story/first/1.jpg"/>
               <!-- <button class="story_but" onclick="nextstory()">&#10095;</button> -->
           </div>
           <div class="countdown"></div>
@@ -64,6 +65,10 @@
       </div>
       <div class="pauseui">
         <h1>Pause!</h1>
+        <p>BGM</p>
+        <input type="range" min="0" max="100" value="50" class="slider" onchange="updatesound('bgm',this.value)">
+        <p>Effect</p>
+        <input type="range" min="0" max="100" value="50" class="slider" onchange="updatesound('eff',this.value)">
         <h2>แค่นี้ก็เหนื่อยแล้วหรอ...แล้วชาตินี้จะจีบติดไหม ?</h2>
         <button class="btn" onclick="resume()">RESUME</button>
       </div>
@@ -76,7 +81,10 @@
     <footer>I love you but as friend</footer>
   </div>
   <div>
-      <embed src="sound/bgm.mp3" loop>
+      <!-- <embed src="sound/lazer.mp3" loop> -->
+      <audio loop autoplay>
+        <source src="sound/bgm.mp3" type="audio/mpeg">
+      </audio>
   </div>
   <script src="js/game.js"></script>
 </body>

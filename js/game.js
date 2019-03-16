@@ -196,10 +196,11 @@ function devil(){
 
 function createUltimate($container, x, y, b_size) {
   const $element = document.createElement("img"); 
-  $element.src = "img/unti1.gif";
+  $element.src = "img/bullet.gif";
   $element.className = "ultimate";
   if (b_size){
-    $element.style.width = "600px";
+    $element.src = "img/bullet1.gif";
+    $element.style.width = "500px";
   }
   $container.appendChild($element);
   const ultimate = { name: "ult", damage: 1, x , y, $element };

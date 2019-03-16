@@ -349,7 +349,7 @@ button{
   color: red;
   font-size: 26px;
   text-shadow: 4px 4px 10px red;
-  transition: 0.7s;
+  transition: 0.5s;
 
 }
 
@@ -511,11 +511,13 @@ button{
 }
 
 .slidebut {
-  border-radius: 15px;
   animation: move-up 2s;
   animation-fill-mode: forwards;
   position: relative;
   bottom: 120px;
+  width: 50px;
+  height: 70px;
+  margin: 0px 25px 0px 25px;
 }
 
 .progressBar {

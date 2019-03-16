@@ -654,7 +654,7 @@ function init() {
 }
 
 function playerHasWon() {
-  return GAME_STATE.score >= 50000;
+  return GAME_STATE.score >= 9000;
   // return 1;
 }
 

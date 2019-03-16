@@ -49,7 +49,7 @@ const Boss_Enemy_MINX = 0;
 const Boss_Enemy_MAXX = GAME_WIDTH - 60;
 const Boss_Enemy_MINY = 70;
 const Boss_Enemy_MAXY = GAME_HEIGHT - 100;
-const Boss_Enemy_STYLE = 11;
+const Boss_Enemy_STYLE = 13;
 
 
 const STORY_START = 4;

@@ -363,9 +363,11 @@ function damaged($container, x, y, num) {
   damaged.innerHTML = `-${num}`;
   damaged.className = "damaged";
   $container.appendChild(damaged);
+  document.querySelector('#maxhealth').className = "blood_reduce";
   setPosition(damaged, x, y);
   updatehealth();
   setTimeout(function(){
+    document.querySelector('#maxhealth').className = "";
     $container.removeChild(damaged);
   }, 300);
 }

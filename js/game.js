@@ -52,7 +52,7 @@ const Boss_Enemy_MAXY = GAME_HEIGHT - 100;
 const Boss_Enemy_STYLE = 13;
 
 
-const STORY_START = 4;
+const STORY_START = 6;
 const STORY_END = 7;
 
 var GAME_HEAL = 1;

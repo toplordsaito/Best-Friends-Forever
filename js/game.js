@@ -242,9 +242,11 @@ function updatestack(){
   mystack = document.querySelector(".percenBar");
   if(GAME_STATE.player_stack == MAX_STACK){
     mystack.classList.add("shake_gauge");
+    mystack.classList.add("fullgauge");
   }
   else{
     mystack.classList.remove("shake_gauge");
+    mystack.classList.remove("fullgauge");
   }
   mystack.style.width = `${GAME_STATE.player_stack*100/20}%`;
 }
@@ -614,13 +616,6 @@ function spawnSKILL(dt, $container){
     GAME_STATE.skill_spaw -= dt;
   }
 }
-
-
-
-
-
-
-
 
 function init() {
   updatestack();

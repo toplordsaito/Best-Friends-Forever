@@ -123,7 +123,7 @@ footer {
 
 @keyframes scroll-background {
   from {
-    background-position-x: 256px;
+    background-position-x: 800px;
   }
   to {
     background-position-x: 0px;
@@ -138,7 +138,7 @@ footer {
   text-align: center;
   width: 100%;
   height: 100%;
-  background: url(../img/background-blue.png);
+  background: url(../img/bb.jpg);
   position: relative;
   overflow: hidden;
 }

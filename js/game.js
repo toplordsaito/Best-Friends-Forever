@@ -51,9 +51,10 @@ const Boss_Enemy_MINY = 70;
 const Boss_Enemy_MAXY = GAME_HEIGHT - 100;
 const Boss_Enemy_STYLE = 13;
 
+const VICTORY_SCORE = 50000;
 
-const STORY_START = 6;
-const STORY_END = 7;
+const STORY_START = 7;
+const STORY_END = 8;
 
 var GAME_HEAL = 1;
 var Boss_Enemy_Damage = 1;
@@ -432,7 +433,7 @@ function createBoss_Enemy($container) {
   $element.className = "Boss_Enemy";
   $container.appendChild($element);
   const Boss_Enemy = {
-    maxcooldown: (parseInt(Math.random() * Boss_Enemy_COOLDOWN) + 1) * Boss_Enemy_COOLDOWN_RANGE + 1,
+    maxcooldown: (1-(Math.min(GAME_STATE.score, 30000)/30000)) * 0.5 + 0.5,
     health: GAME_STATE.Boss_Enemyhealth,
     x: x-100,
     y,
@@ -486,9 +487,9 @@ function destroyBoss_Enemy($container, Boss_Enemy) {
 
 
 function levelup($container){
-  GAME_STATE.MAX_MATEO_DELAY = Math.max(.5, GAME_STATE.MAX_MATEO_DELAY - 0.03)
+  GAME_STATE.MAX_MATEO_DELAY = Math.max(.5, GAME_STATE.MAX_MATEO_DELAY - 0.03);
   LASER_COOLDOWN = Math.max(.2, LASER_COOLDOWN - 0.05);
-  GAME_STATE.Boss_Enemyhealth += 2;
+  GAME_STATE.Boss_Enemyhealth += 3;
   GAME_STATE.Boss_EnemyX = 0;
   GAME_STATE.Boss_EnemyY = 0;
   setTimeout(function(){ createBoss_Enemy($container)}, 1000);
@@ -657,7 +658,7 @@ function init() {
 }
 
 function playerHasWon() {
-  return GAME_STATE.score >= 9000;
+  return GAME_STATE.score >= VICTORY_SCORE;
   // return 1;
 }
 

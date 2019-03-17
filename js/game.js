@@ -53,8 +53,8 @@ const Boss_Enemy_STYLE = 13;
 
 const VICTORY_SCORE = 50000;
 
-const STORY_START = 7;
-const STORY_END = 8;
+const STORY_START = 8;
+const STORY_END = 9;
 
 var GAME_HEAL = 1;
 var Boss_Enemy_Damage = 1;

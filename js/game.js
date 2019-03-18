@@ -51,7 +51,7 @@ const Boss_Enemy_MINY = 70;
 const Boss_Enemy_MAXY = GAME_HEIGHT - 100;
 const Boss_Enemy_STYLE = 13;
 
-const VICTORY_SCORE = 50000;
+const VICTORY_SCORE = 30000;
 
 const STORY_START = 8;
 const STORY_END = 9;
